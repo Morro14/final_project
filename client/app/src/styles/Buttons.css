@@ -1,0 +1,48 @@
+.button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 28px;
+  border-radius: 4px;
+  background-color: #ebe6d696;
+  color: rgb(51, 51, 51);
+  border: solid 1px rgb(155, 155, 155);
+}
+
+.button:hover {
+  background-color: #dad5c696;
+  cursor: pointer;
+}
+
+.button-text {
+  font-size: 16px;
+}
+
+.tab-button {
+  width: 100px;
+  height: 28px;
+}
+.filter-button {
+  height: 22px;
+}
+
+.add-form-index-button {
+  width: 150px;
+  margin-right: 15px;
+  color: rgb(51, 51, 51);
+}
+
+.add-form-index-button:visited {
+  color: rgb(51, 51, 51);
+}
+.add-form-index-button:link {
+  color: rgb(51, 51, 51);
+}
+
+/* .button-active {
+  background-color: #1e3c5e;
+}
+.button-active:hover {
+  background-color: #2b5686;
+} */

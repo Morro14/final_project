@@ -1,0 +1,44 @@
+.auth {
+  display: flex;
+  justify-content: left;
+  font-family: "pt_astra_sans_regular", sans-serif;
+  color: #153e6c;
+}
+
+.auth-content {
+  display: flex;
+  justify-content: left;
+  flex-direction: column;
+  h2 {
+    text-align: left;
+  }
+}
+
+.auth-form {
+  display: flex;
+
+  flex-direction: column;
+}
+
+.auth-form > label {
+  margin-top: 10px;
+}
+
+.auth-button {
+  margin-top: 20px;
+}
+
+.search-bar {
+  margin: 0;
+  width: 280px;
+  height: 28px;
+  border-radius: 4px;
+
+  font-size: 18px;
+}
+
+.auth-excpetion-msg {
+  color: rgb(219, 22, 22);
+  font-size: 14px;
+  height: 14px;
+}

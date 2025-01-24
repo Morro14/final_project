@@ -1,0 +1,24 @@
+.add-form {
+  width: 220px;
+}
+
+.add-form-section {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+}
+
+.add-form-section > textarea {
+  width: 240px;
+  height: 80px;
+  resize: none;
+}
+
+.add-form-button {
+  margin-top: 18px;
+}
+
+.add-form-index-buttons {
+  display: flex;
+  flex-direction: row;
+}

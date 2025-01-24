@@ -1,0 +1,19 @@
+.container-search {
+  font-family: "PT Astra Sans", serif;
+  font-weight: normal;
+  background-color: white;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  box-sizing: border-box;
+
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.container-main {
+  display: flex;
+  background-color: #f4f4f4;
+  min-height: 100vh;
+}
