@@ -23,13 +23,17 @@
 .tab-bar .active:hover {
   background-color: #dad5c696;
 }
-
 .tab-bar {
+  display:flex;
+  justify-content: space-between;
+}
+.tab-bar-left {
   display: flex;
   .button {
     margin-right: 15px;
   }
 }
+
 .dashboard-container {
   margin-top: 20px;
 }

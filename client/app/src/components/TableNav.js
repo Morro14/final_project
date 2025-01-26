@@ -78,6 +78,7 @@ export default function TableNav({ params }) {
         Информация о комплектации и характеристиках вашей техники
       </h4>
       <div className="tab-bar">
+      <div className="tab-bar-left">
         <NavLink className="button tab-button" to={"/dashboard/machines"}>
           Техника
         </NavLink>
@@ -86,6 +87,10 @@ export default function TableNav({ params }) {
         </NavLink>
         <NavLink className="button tab-button" to={"/dashboard/reclamations"}>
           Рекламации
+        </NavLink>
+      </div>
+      <NavLink className="button tab-button tab-button-add" to={"/dashboard/create"}>
+          Добавить данные
         </NavLink>
       </div>
       <div className="dashboard-topbar">

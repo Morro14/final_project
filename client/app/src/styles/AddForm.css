@@ -1,24 +1,38 @@
 .add-form {
-  width: 220px;
+	width: 220px;
 }
 
 .add-form-section {
-  display: flex;
-  flex-direction: column;
-  margin-top: 10px;
+	display: flex;
+	flex-direction: column;
+	margin-top: 18px;
 }
 
 .add-form-section > textarea {
-  width: 240px;
-  height: 80px;
-  resize: none;
+	width: 240px;
+	height: 80px;
+	resize: none;
 }
 
 .add-form-button {
-  margin-top: 18px;
+	margin-top: 18px;
 }
 
 .add-form-index-buttons {
-  display: flex;
-  flex-direction: row;
+	display: flex;
+	flex-direction: row;
+}
+
+.input-inner {
+	display: flex;
+}
+.input-error {
+	margin-left: 10px;
+	color: red;
+}
+.input-el {
+	font-size: 16px;
+}
+.select-el {
+	width: 100%;
 }

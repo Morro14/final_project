@@ -1,10 +1,8 @@
 import {
   redirect,
   useLoaderData,
-  useOutlet,
   useOutletContext,
   useParams,
-  useSearchParams,
 } from "react-router-dom";
 import { addFormFields } from "../details/names";
 import { nameDict, textareaFields } from "../details/names";
@@ -14,9 +12,12 @@ import axios from "axios";
 import { serverURL } from "../App";
 import { choiceFields } from "../details/names";
 import { categoryFieldToDetails } from "../details/names";
-import { useState } from "react";
-import Select from "react-select";
-import { useFetcher } from "react-router-dom";
+
+import { FormProvider, useForm } from "react-hook-form";
+import { Input } from "./form_components/Input";
+import { TextArea } from "./form_components/TextArea";
+import { Select } from "./form_components/Select";
+import { inputValidation } from "./form_components/Validations";
 
 export async function formLoader() {
   const data = axios
@@ -30,49 +31,37 @@ export async function formLoader() {
   return data;
 }
 
-export default function AddForm({ params }) {
+export default function AddForm() {
+  const methods = useForm();
+  const onSubmit = methods.handleSubmit(data => {
+    console.log(data)
+  })
   const category = useParams("category").category;
   const choices = useLoaderData().data;
   const client = useOutletContext().client;
-  let fetcher = useFetcher();
-
-  // const [inputs, setInputs] = useState({});
-  // console.log("inputs", inputs);
-
-  // const handleChange = (e) => {
-  //   const { name, value } = e.target;
-  //   console.log(e.target);
-  //   setInputs((prev) => ({
-  //     ...prev,
-  //     [name]: value,
-  //   }));
-  // };
-  // const handleSelect = (o, s) => {
-  //   console.log("handleSelect", o, s);
-
-  //   setInputs((prev) => ({
-  //     ...(prev[o.ref_type] = o.option),
-  //   }));
-  // };
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   console.log("submit", inputs);
-  // };
+  const titleCategoty = {
+    reclamation: "рекламации",
+    maintenance: "техническом обслуживании",
+    machine: "технике"
+  }
 
   const getField = (field) => {
     const detailField = categoryFieldToDetails(field);
 
     if (textareaFields.includes(field)) {
       return (
-        <textarea
-          // required
+        <TextArea
+          label={nameDict[field]}
+          type="text"
+          id={field}
+          placeholder={nameDict[field]}
+          key={"textarea" + field}
           maxLength={220}
-          key={"add-form-inp-" + field}
-          name={field}
-        ></textarea>
+
+        ></TextArea>
       );
     } else if (choiceFields.includes(detailField)) {
+
       let options = [];
 
       choices.map((c) => {
@@ -82,56 +71,62 @@ export default function AddForm({ params }) {
       });
 
       return (
-        <select
-          // required
-          name={detailField}
-          key={"add-form=slc=" + detailField}
-          // onChange={(option, select) => handleSelect(option, select)}
+        <Select
+          label={nameDict[field]}
+          type="select"
+          id={field}
+          options={options}
+          name={field}
         >
           {options.map((o) => (
             <option key={"add-form-opt" + o.id}>{o.name}</option>
           ))}
-        </select>
+        </Select>
       );
     } else {
       return (
-        <input
-          // required
-          // onChange={handleChange}
-          key={"add-form-inp-" + field}
+        <Input
+          label={nameDict[field]}
           name={field}
-        ></input>
+          type="text"
+          id={field}
+          placeholder={nameDict[field]}
+          key={"inpt" + field}
+          validation={inputValidation}
+        ></Input>
       );
     }
   };
 
   return (
     <div className="add-form-container">
-      <div className="add-form-title"></div>
-      <Form
-        className="add-form"
-        method="post"
-        action={"/dashboard/create/" + category}
-      >
-        {addFormFields[category].map((f) => (
-          <div className="add-form-section" key={"add-form-section-" + f}>
-            <label>{nameDict[f]}</label>
-            {getField(f)}
-          </div>
-        ))}
-        <button className="add-form-button button" type="submit">
-          Добавить
-        </button>
-      </Form>
+      <h2 className="add-form-title">Добавить данные о {titleCategoty[category]}</h2>
+      <FormProvider {...methods}>
+        <Form
+          onSubmit={e => e.preventDefault()}
+          className="add-form"
+          noValidate
+        >
+          {addFormFields[category].map((f) => (
+            <div className="add-form-section" key={"add-form-section-" + f}>
+
+              {getField(f)}
+            </div>
+          ))}
+          <button className="add-form-button button" onClick={onSubmit}>
+            Добавить
+          </button>
+        </Form>
+      </FormProvider>
     </div>
   );
 }
 
-export async function action({ request }) {
-  const formData = await request.formData();
-  console.log(formData);
+// export async function action({ request }) {
+//   const formData = await request.formData();
+//   console.log(formData);
 
-  // let category = new URL(request.url).searchParams.get("sorting");
+//   // let category = new URL(request.url).searchParams.get("sorting");
 
-  return redirect("/dashboard/create/report");
-}
+//   return redirect("/dashboard/create/report");
+// }

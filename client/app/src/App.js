@@ -22,7 +22,7 @@ import {
 } from "react-router-dom";
 
 import TableNav, { sortedLoader } from "./components/TableNav.js";
-import AddForm, { action, formLoader } from "./components/AddForm.js";
+import AddForm, { formLoader } from "./components/AddForm.js";
 import AddFormReport from "./components/AddFormReport.js";
 import AddFormIndex from "./components/AddFormIndex.js";
 
@@ -65,7 +65,7 @@ const router = createBrowserRouter(
 
           <Route element={<Dashboard />} loader={dashboardLoader}>
             <Route
-              action={action}
+
               loader={formLoader}
               path={"/dashboard/create/:category"}
               element={<AddForm />}
