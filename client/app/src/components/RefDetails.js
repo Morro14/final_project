@@ -16,6 +16,8 @@ export async function refLoader({ params }) {
   return data;
 }
 
+
+
 export default function RefDetials({ params }) {
   const response = useLoaderData();
   const navigate = useNavigate();

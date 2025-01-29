@@ -18,18 +18,8 @@ export async function dashboardLoader({ params }) {
 
 export default function Dashboard({ children }) {
   const response = useLoaderData();
-  let client = "";
-  // let reclamations = "";
-  // let maintenances = "";
-  // let machines = "";
+  let client = response.data.client;
 
-  if (response.data) {
-    const data = response.data;
-    // reclamations = data.reclamations_list;
-    // maintenances = data.mt_list;
-    client = data.client;
-    // machines = data.machine_list;
-  }
 
   return (
     <div className="dashboard">

@@ -5,6 +5,8 @@ import "../styles/Tooltip.css";
 import { useLoaderData } from "react-router-dom";
 import ErrorComp from "./ErrorComp.js";
 import { Link } from "react-router-dom";
+import { linkNames, nameDict } from "../utils/names.js";
+import { formatRowData, getLink } from "../utils/formatting.js";
 
 export async function detailsLoader({ params }) {
   let data = null;
@@ -38,49 +40,16 @@ export async function detailsLoader({ params }) {
 }
 
 export default function SearchResults() {
-  const nameDict = {
-    engine_id: "Зав.№ двигателя",
-    engine_model: "Модель двигателя",
-    id_num: "Заводской номер машины",
-    main_bridge_id: "Зав.№ главного моста",
-    main_bridge_model: "Модель главного моста",
-    model: "Модель",
-    steerable_bridge_id: "Зав.№ двигателя",
-    steerable_bridge_model: "Модель двигателя",
-    transmission_id: "Зав.№ трансмиссии",
-    transmission_model: "Модель трансмиссии",
-    supply_contract_num_date: "Договор поставки №, дата",
-    shipment_date: "Дата отгрузки с завода",
-    cargo_receiver: "Грузополучатель (конечный потребитель)",
-    supply_address: "Адрес поставки (эксплуатации)",
-    equipment_add: "Комплектация",
-    client: "Клиент",
-    service_company: "Сервисная компания",
-  };
-  const keyNames = (name_prev) => {
+
+  const fieldLabel = (name_prev) => {
     return nameDict[name_prev];
   };
 
   const response = useLoaderData();
-  console.log("rendering results: repsonse", response);
 
-  // let dataNew = response.data;
   const { id, sorting_fields, ...rest } = response.data;
   const dataNew = rest;
-  const getLink = (key, value) => {
-    const keysArray = [
-      "model",
-      "engine_model",
-      "main_bridge_model",
-      "steerable_bridge_model",
-      "transmission_model",
-    ];
-
-    const found = keysArray.find((k) => key === k);
-    if (found) {
-      return <Link to={`/details/${value}`}>{value}</Link>;
-    } else return value;
-  };
+  const formattedData = formatRowData(response.data)
 
   return !response.data ? (
     <ErrorComp response={response}></ErrorComp>
@@ -93,11 +62,11 @@ export default function SearchResults() {
         <table className="results-table table">
           <thead></thead>
           <tbody>
-            {Object.entries(dataNew).map(([key, value]) => (
+            {Object.entries(formattedData).map(([key, value]) => (
               <tr key={"rlst_tr" + key}>
-                <th key={"rslt_th_" + key}>{keyNames(key)}</th>
+                <th key={"rslt_th_" + key}>{fieldLabel(key)}</th>
                 <td key={"rlst_td" + key}>
-                  {getLink(key, value)}
+                  {getLink(key, value, linkNames)}
 
                   <div className={`tooltip tooltip-${key}`} key={key}>
                     {value}

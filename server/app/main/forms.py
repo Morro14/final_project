@@ -84,6 +84,9 @@ class MaintenanceModelForm(forms.ModelForm):
     mt_date = forms.DateField(label='Maintenance date', input_formats=settings.DATE_INPUT_FORMATS)
     order_date = forms.DateField(label='Oder date', input_formats=settings.DATE_INPUT_FORMATS)
 
+
+
+
     class Meta:
         model = Maintenance
         fields = '__all__'
@@ -92,6 +95,9 @@ class MaintenanceModelForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         type = Reference.objects.filter(ref_type='maintenance_type')
         service_company = Reference.objects.filter(ref_type='service')
+        mt_company = Reference.objects.filter(ref_type='service')
 
         self.fields['type'].queryset = type
         self.fields['service_company'].queryset = service_company
+        self.fields['mt_company'].queryset = mt_company
+        self.fields['mt_company'].label = 'Maintenance company'

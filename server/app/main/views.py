@@ -1,3 +1,5 @@
+from rest_framework.generics import GenericAPIView, ListAPIView, RetrieveAPIView
+from rest_framework.mixins import ListModelMixin
 from rest_framework.response import Response
 
 from rest_framework.views import APIView
@@ -13,76 +15,48 @@ from .serializers import MachineSerializer, MachineRestrictedSerializer, Referen
 from rest_framework.authentication import TokenAuthentication
 from django.shortcuts import get_object_or_404
 from django.http import Http404
-from rest_framework.exceptions import AuthenticationFailed
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
+from drf_spectacular.types import OpenApiTypes
 
 
 # Create your views here.
 
-
-class MachineViewSet(viewsets.ReadOnlyModelViewSet):
+@extend_schema(tags=["Machines"])
+class MachineViewSet(viewsets.ModelViewSet):
     authentication_classes = [TokenAuthentication]
     queryset = Machine.objects.all()
     lookup_field = "id_num"
+    serializer_class = MachineSerializer
 
-    def get_serializer_class(self):
-        return MachineSerializer
-
-
-class MachineRestrictedViewSet(viewsets.ReadOnlyModelViewSet):
+@extend_schema(tags=["Machines"])
+class MachineRestrictedView(RetrieveAPIView):
     authentication_classes = []
     queryset = Machine.objects.all()
     lookup_field = "id_num"
+    serializer_class = MachineRestrictedSerializer
 
-    def get_serializer_class(self):
-        return MachineRestrictedSerializer
-
-
-machine_details = MachineViewSet.as_view({"get": "retrieve"})
-machine_list = MachineViewSet.as_view({"get": "list"})
-
-machine_restricted_details = MachineRestrictedViewSet.as_view({"get": "retrieve"})
-machine_restricted_list = MachineRestrictedViewSet.as_view({"get": "list"})
+@extend_schema(tags=["References"])
+class ReferenceViewSet(viewsets.ModelViewSet):
+    authentication_classes = []
+    queryset = Reference.objects.all()
+    lookup_field = "name"
+    serializer_class = ReferenceSerializer
 
 
-class ReferenceView(APIView):
-    def get(self, request, name):
+@extend_schema(
+    parameters=[
+        OpenApiParameter('email', OpenApiTypes.EMAIL, required=True, description='Users email'),
+        OpenApiParameter('password', OpenApiTypes.PASSWORD, required=True, description='Users password'),
 
-        try:
-            ref_object = get_object_or_404(Reference, name=name)
-        except Reference.DoesNotExist:
-            raise Http404("Given query not found")
-        ref_serializer = ReferenceSerializer(ref_object)
-        return Response(ref_serializer.data)
-
-
-class ReferencesView(APIView):
-    def get(self, request):
-        # queryset = Reference.objects.all()
-        queryset = Reference.objects.exclude(ref_type__in=['client', 'service'])
-        print(queryset)
-        serializer = ReferenceSerializer(queryset, many=True)
-        return Response(serializer.data)
-
-
-class TestView(APIView):
-    def get(self, request, id):
-        ref_object = Reference.objects.get(id=id)
-        ref_serialized = ReferenceSerializer(ref_object)
-        return Response(ref_serialized.data)
-
-
+    ]
+)
 class AuthView(APIView):
     def post(self, request):
-        print(request.data)
         user = authenticate(email=request.data["email"], password=request.data["password"])
         if user is not None:
             token, created = Token.objects.get_or_create(user=user)
-            print('user is authenticated')
             return Response({"email": user.email, 'token': token.key})
-
         else:
-            print('user is not authenticated')
-
             return Response({'error': 'Invalid credentials'})
 
 
@@ -111,7 +85,7 @@ class ReclamationSetView(viewsets.ReadOnlyModelViewSet):
 
 
 class AuthenticatedView(APIView):
-    print('authenticated_view')
+
     authentication_classes = [TokenAuthentication]
 
     def get(self, request):
@@ -142,47 +116,62 @@ class SortedView(APIView):
     authentication_classes = [TokenAuthentication]
 
 
-    def get(self, request, category, sorting):
+    def get(self, request, category, **kwargs):
+        print(category, kwargs)
+
+        sorting = kwargs['sorting'] if 'sorting' in kwargs else None
+
         try:
             user = get_object_or_404(MyUser, email=request.user)
-            # print(user.has_perm('main.view_machine'))
-            # print(user.has_perm('main.view_reclamation'))
-            # print(user.has_perm('main.view_reference'))
+
             client = user.user_ref
         except MyUser.DoesNotExist:
             raise Http404("Access error")
 
         if user.is_authenticated:
+
             machine_list = Machine.objects.filter(client=client)
-            print('client', client)
-            print('machine_list', machine_list)
+
             machine_ids = []
             for m in machine_list:
                 machine_ids.append(m.id_num)
 
             if category == "machines":
-                if sorting != "undefined":
+                if sorting:
                     machine_list.order_by(sorting)
                 return Response({'sorted_list': MachineSerializer(machine_list, many=True).data})
 
             elif category == "maintenances":
                 mt_list = Maintenance.objects.filter(machine__id_num__in=machine_ids)
-                if sorting != "undefined":
+                if sorting:
                     mt_list = mt_list.order_by(sorting)
                 return Response({'sorted_list': MaintenanceSerializer(mt_list, many=True).data})
 
             elif category == "reclamations":
                 reclamations_list = Reclamation.objects.filter(machine_id__id_num__in=machine_ids)
-                if sorting != "undefined":
+                if sorting:
                     reclamations_list = reclamations_list.order_by(sorting)
                 return Response({'sorted_list': ReclamationSerializer(reclamations_list, many=True).data})
 
 class CreateView(APIView):
-
-
-
+    # def get(self, request, category):
+    authentication_classes = [TokenAuthentication]
     def post(self, request, category):
-        print(request.data)
+
+        print(category, request.data)
+        data = request.data
+        print(Reference.objects.filter(ref_type='service'))
+        service_company = Reference.objects.get(name=data['service_company'])
+        print(service_company)
+        # entity_data = {
+        #     'service_company' : data.service_company,
+        #     'machine': data.machine,
+        #     'service_company': data.service_company,
+        #     'service_company': data.service_company,
+        #     'service_company': data.service_company,
+        # }
+
+
 
 
 

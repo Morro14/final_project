@@ -1,5 +1,5 @@
 export const InputError = ({ message }) => {
-    console.log('error message', message);
+
     return (
         <div className="input-error">
             {message}
@@ -12,7 +12,7 @@ export function findErrors(errors, name) {
     let filtered = Object.keys(errors).filter(key => (key.includes(name))
     )
     const reduced = filtered.reduce((cur, key) => {
-        return Object.assign(cur, { error: errors[key]['type'] })
+        return Object.assign(cur, { error: errors[key]['message'] })
     }, {})
     return reduced
 }

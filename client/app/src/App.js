@@ -21,10 +21,11 @@ import {
   Navigate,
 } from "react-router-dom";
 
-import TableNav, { sortedLoader } from "./components/TableNav.js";
-import AddForm, { formLoader } from "./components/AddForm.js";
-import AddFormReport from "./components/AddFormReport.js";
-import AddFormIndex from "./components/AddFormIndex.js";
+import TableNav, { sortedLoader } from "./components/Table/TableNav.js";
+import AddForm, { formLoader } from "./components/AddForm/AddForm.js";
+import AddFormReport from "./components/AddForm/AddFormReport.js";
+import AddFormIndex from "./components/AddForm/AddFormIndex.js";
+import MachineDetails, { machineLoader } from "./components/MachineDetails.js";
 
 export const serverURL = "http://127.0.0.1:8000/api";
 
@@ -54,6 +55,11 @@ const router = createBrowserRouter(
           path="/details/:value"
           element={<RefDetials />}
           loader={refLoader}
+        ></Route>
+        <Route
+          path="/details/machines/:value"
+          element={<MachineDetails />}
+          loader={machineLoader}
         ></Route>
         <Route path="/auth" element={<Authorization />}></Route>
 

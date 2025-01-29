@@ -1,4 +1,5 @@
 export const nameDict = {
+  // labels
   engine_id: "Зав.№ двигателя",
   engine_model: "Модель двигателя",
   id_num: "Заводской номер машины",
@@ -16,99 +17,52 @@ export const nameDict = {
   equipment_add: "Комплектация",
   client: "Клиент",
   service_company: "Сервисная компания",
-
-  refuse_date: "Дата отказа",
-
+  refuse_date: "Дата и время отказа",
   failure_node: "Узел отказа",
   failure_description: "Описание отказа",
   recovery_method: "Способ восстановления",
   spare_parts_use: "Используемые запасные части",
-  recovery_date: "Дата восстановления",
+  recovery_date: "Дата и время восстановления",
   machine_downtime: "Время простоя техники",
   machine_name: "Модель техники",
   machine_id: "Заводской номер машины",
-
   machine: "Модель техники",
   mt_date: "Дата проведения ТО",
   operating_time: "Наработка, м/час",
   order_date: "Дата заказ-наряда",
   order_num: "№ заказ-наряда",
   type: "Вид ТО",
+  mt_company: "Компания Т.О."
 };
 
-export const sortLabels = {
+export const filterFields = {
+  // fields for filters
   machines: [
-    {
-      value: "model",
-      label: "модель",
-    },
-    {
-      value: "engine_model",
-      label: "модель двигателя",
-    },
-    {
-      value: "transmission_model",
-      label: "модель трансмиссии",
-    },
-    {
-      value: "main_bridge_model",
-      label: "модель ведущего моста",
-    },
-    {
-      value: "steerable_bridge_model",
-      label: "модель управляемого моста",
-    },
-    {
-      value: "id_num",
-      label: "заводской номер",
-    },
+    "model",
+    "engine_model",
+    "transmission_model",
+    "main_bridge_model",
+    "steerable_bridge_model",
   ],
   maintenances: [
-    {
-      value: "mt_date",
-      label: "дата проведения ТО",
-    },
-    {
-      value: "service_comapny",
-      label: "сервисная компания",
-    },
-    {
-      value: "mt_type",
-      label: "вид ТО",
-    },
-    {
-      value: "machine_id",
-      label: "заводской номер машины",
-    },
+    "mt_comapny",
+    "service_comapny",
+    "mt_type",
+    "machine_id",
   ],
   reclamations: [
-    {
-      value: "refuse_date",
-      label: "дата отказа",
-    },
-    {
-      value: "failure_node",
-      label: "узел отказа",
-    },
-    {
-      value: "recovery_method",
-      label: "метод восстановления",
-    },
-    {
-      value: "machine_id",
-      label: "заводской номер машины",
-    },
-    {
-      value: "service_company",
-      label: "сервисная компания",
-    },
-  ],
+    "failure_node",
+    "recovery_method",
+    "service_company",
+  ]
+
 };
 
 export const addFormFields = {
+  // form fields 
+  // #TODO получать поля для формы через API
   machine: [
     "service_company",
-
     "id_num",
     "model",
     "engine_model",
@@ -124,6 +78,8 @@ export const addFormFields = {
     "equipment_add",
   ],
   maintenance: [
+    "service_company",
+    "mt_company",
     "machine",
     "type",
     "mt_date",
@@ -144,7 +100,8 @@ export const addFormFields = {
   ],
 };
 
-export const textareaFields = ["cargo_receiver", "equipment_add"];
+
+export const textareaFields = ["cargo_receiver", "equipment_add", "failure_description"];
 
 export const choiceFields = [
   "machine_model",
@@ -156,7 +113,20 @@ export const choiceFields = [
   "failure_node",
   "recovery_method",
   "maintenance_type",
+  "service_company",
+  "mt_company"
 ];
+
+export const dateFields = [
+  "mt_date",
+  "order_date",
+
+]
+
+export const datetimeFields = [
+  "refuse_date",
+  "recovery_date"
+]
 
 export const categoryFieldToDetails = (field) => {
   switch (field) {
@@ -169,3 +139,18 @@ export const categoryFieldToDetails = (field) => {
   }
   return field;
 };
+
+export const linkNames = [
+  "machine",
+  "engine_model",
+  "main_bridge_model",
+  "steerable_bridge_model",
+  "transmission_model",
+  "type",
+  "service_company",
+  "mt_company",
+  "recovery_method",
+  "failure_node",
+];
+
+

@@ -58,13 +58,12 @@ class Reference(models.Model):
 class Machine(models.Model):
     def __str__(self):
         return self.id_num
-
     client = models.ForeignKey(to=Reference, on_delete=models.CASCADE, related_name='machine_client',
                                related_query_name='machine_clients', blank=True, default=None, null=True)
     # TODO
     service_company = models.ForeignKey(to=Reference, on_delete=models.CASCADE, related_name='machine_service',
                                         related_query_name='machine_services', blank=True, default=None, null=True)
-    id_num = models.TextField(max_length=30)
+    id_num = models.TextField(max_length=30, unique=True)
     model = models.ForeignKey(to=Reference, on_delete=models.CASCADE, related_name='model', related_query_name='models')
     engine_model = models.ForeignKey(to=Reference, on_delete=models.CASCADE, related_name='engine_model',
                                      related_query_name='engine_models', )
@@ -79,7 +78,6 @@ class Machine(models.Model):
                                                related_name='steerable_bridge_model',
                                                related_query_name='steerable_bridge_models')
     steerable_bridge_id = models.TextField(max_length=30)
-
     supply_contract_num_date = models.TextField(max_length=120)
     shipment_date = models.DateField()
     cargo_receiver = models.TextField(max_length=120)
@@ -98,7 +96,9 @@ class Maintenance(models.Model):
         return self.machine.id_num
 
     service_company = models.ForeignKey(to=Reference, on_delete=models.CASCADE, related_name='maintenance_ref',
-                                        related_query_name='maintenancs_ref', blank=True, default=None, null=True)
+                                        related_query_name='maintenance_ref', blank=True, default=None, null=True)
+    mt_company = models.ForeignKey(to=Reference, on_delete=models.CASCADE, related_name='mt_company_ref',
+                                   related_query_name='mt_companies_ref', blank=True, default=None, null=True)
 
     machine = models.ForeignKey(to=Machine, on_delete=models.CASCADE, related_name='maintenance_machine',
                                 related_query_name='maintenance_machines')
@@ -144,6 +144,7 @@ class Reclamation(models.Model):
 
     service_company = models.ForeignKey(to=Reference, on_delete=models.CASCADE, related_name='reclamation_ref',
                                         related_query_name='reclamations_ref', blank=True, default=None, null=True)
+
 
     machine = models.ForeignKey(to=Machine, on_delete=models.CASCADE, related_name='reclamation_machine',
                                 related_query_name='reclamation_machines')

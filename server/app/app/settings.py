@@ -31,6 +31,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 AUTH_USER_MODEL = 'main.MyUser'
 DATE_INPUT_FORMATS = ["%d/%m/%Y"]
+
 USE_L10N = False
 
 
@@ -48,10 +49,19 @@ INSTALLED_APPS = [
     'main',
     'rest_framework',
     'corsheaders',
-    'rest_framework.authtoken'
+    'rest_framework.authtoken',
+    'drf_spectacular'
 
 ]
-
+REST_FRAMEWORK = {
+    # YOUR SETTINGS
+    'TITLE': 'Silant API',
+    'DESCRIPTION': 'description',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # OTHER SETTINGS
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',

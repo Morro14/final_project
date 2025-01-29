@@ -4,20 +4,19 @@ import {
   useOutletContext,
   useParams,
 } from "react-router-dom";
-import { addFormFields } from "../details/names";
-import { nameDict, textareaFields } from "../details/names";
+import { nameDict, textareaFields, choiceFields, dateFields, datetimeFields, addFormFields, categoryFieldToDetails } from "../../utils/names";
 import { Form } from "react-router-dom";
-import "../styles/AddForm.css";
+import "../../styles/AddForm.css";
 import axios from "axios";
-import { serverURL } from "../App";
-import { choiceFields } from "../details/names";
-import { categoryFieldToDetails } from "../details/names";
+import { serverURL } from "../../App";
+
 
 import { FormProvider, useForm } from "react-hook-form";
 import { Input } from "./form_components/Input";
 import { TextArea } from "./form_components/TextArea";
 import { Select } from "./form_components/Select";
-import { inputValidation } from "./form_components/Validations";
+import { dateValidationObj, inputValidation, timeValidationObj } from "./form_components/Validations";
+
 
 export async function formLoader() {
   const data = axios
@@ -33,12 +32,16 @@ export async function formLoader() {
 
 export default function AddForm() {
   const methods = useForm();
+  const client = useOutletContext().client;
+  const category = useParams("category").category;
   const onSubmit = methods.handleSubmit(data => {
     console.log(data)
+    data.client = client.id;
+    axios.post(serverURL + '/create/' + category, data)
   })
-  const category = useParams("category").category;
+
   const choices = useLoaderData().data;
-  const client = useOutletContext().client;
+
   const titleCategoty = {
     reclamation: "рекламации",
     maintenance: "техническом обслуживании",
@@ -54,9 +57,11 @@ export default function AddForm() {
           label={nameDict[field]}
           type="text"
           id={field}
-          placeholder={nameDict[field]}
+          // placeholder={nameDict[field]}
           key={"textarea" + field}
           maxLength={220}
+          validation={inputValidation}
+          name={field}
 
         ></TextArea>
       );
@@ -78,12 +83,51 @@ export default function AddForm() {
           options={options}
           name={field}
         >
-          {options.map((o) => (
-            <option key={"add-form-opt" + o.id}>{o.name}</option>
-          ))}
         </Select>
       );
-    } else {
+    } else if (dateFields.includes(detailField)) {
+      return (
+        <Input
+          label={nameDict[field]}
+          name={field}
+          type="date_"
+          id={field}
+          placeholder={nameDict[field]}
+          key={"inpt" + field}
+          validation={dateValidationObj}
+
+        ></Input>
+      );
+    } else if (datetimeFields.includes(detailField)) {
+      return (
+        <div className="datetime-el">{nameDict[field]}
+          <div className="datetime-container">
+            <Input
+              label={"Дата"}
+              name={field + "-date"}
+              type="date_"
+              id={field + "-date"}
+              placeholder={nameDict[field]}
+              key={"inpt" + field + "-date"}
+              validation={dateValidationObj}
+
+            ></Input>
+            <Input
+              label={"Время"}
+              name={field + "_time"}
+              type="time_"
+              id={field + "_time"}
+              placeholder={nameDict[field]}
+              key={"inpt" + field + "_time"}
+              validation={timeValidationObj}
+
+            ></Input>
+          </div>
+        </div>
+      );
+    }
+
+    else {
       return (
         <Input
           label={nameDict[field]}

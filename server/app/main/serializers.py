@@ -1,44 +1,33 @@
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from .models import Machine, Maintenance, Reclamation, Reference
 from rest_framework import permissions
 
+class ReferenceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reference
+        fields = "__all__"
 
 class MachineSerializer(serializers.ModelSerializer):
-    client = serializers.SlugRelatedField(
-        slug_field='name',
-        read_only=True
-    )
-    model = serializers.SlugRelatedField(
-        slug_field='name',
-        read_only=True
-    )
-    engine_model = serializers.SlugRelatedField(
-        slug_field='name',
-        read_only=True
-    )
-    transmission_model = serializers.SlugRelatedField(
-        slug_field='name',
-        read_only=True
-    )
-    main_bridge_model = serializers.SlugRelatedField(
-        slug_field='name',
-        read_only=True
-    )
-    steerable_bridge_model = serializers.SlugRelatedField(
-        slug_field='name',
-        read_only=True
-    )
-    service_company = serializers.SlugRelatedField(
-        slug_field='name',
-        read_only=True
-    )
+    client = ReferenceSerializer()
+    model = ReferenceSerializer()
+    engine_model = ReferenceSerializer()
+    transmission_model = ReferenceSerializer()
+    main_bridge_model = ReferenceSerializer()
+    steerable_bridge_model = ReferenceSerializer()
+    service_company = ReferenceSerializer()
+    # shipment_date = serializers.DateField(format='%d/%m/%Y', input_formats=['%d/%m/%Y'])
 
     sorting_fields = serializers.SerializerMethodField()
+
+    @extend_schema_field({'type': 'array', 'items': {'type', 'string'}})
     def get_sorting_fields(self, obj):
         sorting_fields_dict = ['model', 'engine_model', 'transmission_model', 'main_bridge_model',
                                'steerable_bridge_model', 'id_num', ]
         sorting_field = sorting_fields_dict
         return sorting_field
+
     class Meta:
         model = Machine
         fields = ['id',
@@ -64,31 +53,11 @@ class MachineSerializer(serializers.ModelSerializer):
 
 
 class MachineRestrictedSerializer(serializers.ModelSerializer):
-    model = serializers.SlugRelatedField(
-        slug_field='name',
-        read_only=True
-    )
-
-    engine_model = serializers.SlugRelatedField(
-        slug_field='name',
-        read_only=True
-    )
-
-    transmission_model = serializers.SlugRelatedField(
-        slug_field='name',
-        read_only=True
-    )
-
-    main_bridge_model = serializers.SlugRelatedField(
-        slug_field='name',
-        read_only=True
-    )
-
-    steerable_bridge_model = serializers.SlugRelatedField(
-        slug_field='name',
-        read_only=True
-    )
-
+    model = ReferenceSerializer()
+    engine_model = ReferenceSerializer()
+    transmission_model = ReferenceSerializer()
+    main_bridge_model = ReferenceSerializer()
+    steerable_bridge_model = ReferenceSerializer()
     sorting_fields = serializers.SerializerMethodField()
 
     class Meta:
@@ -113,19 +82,18 @@ class MachineRestrictedSerializer(serializers.ModelSerializer):
         return sorting_field
 
 
-class ReferenceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Reference
-        fields = "__all__"
+
 
 
 class ReclamationSerializer(serializers.ModelSerializer):
-    failure_node = serializers.SlugRelatedField(slug_field='name', read_only=True)
-    recovery_method = serializers.SlugRelatedField(slug_field='name', read_only=True)
-    service_company = serializers.SlugRelatedField(slug_field='name', read_only=True)
-    machine_name = serializers.CharField(source="get_machine_name")
+    failure_node = ReferenceSerializer()
+    recovery_method = ReferenceSerializer()
+    service_company = ReferenceSerializer()
+    machine = MachineRestrictedSerializer()
+    # machine_name = serializers.CharField(source="get_machine_name")
     machine_downtime = serializers.CharField(source="get_downtime")
-    machine_id = serializers.CharField(source="get_machine_id")
+    # machine_id = serializers.CharField(source="get_machine_id")
+    refuse_date = serializers.DateTimeField(format='iso-8601')
 
     class Meta:
         model = Reclamation
@@ -139,19 +107,22 @@ class ReclamationSerializer(serializers.ModelSerializer):
             'spare_parts_use',
             'recovery_date',
             'machine_downtime',
-            'machine_name',
-            'machine_id',
+            'machine',
+
             'service_company'
         ]
 
 
 class MaintenanceSerializer(serializers.ModelSerializer):
-    type = serializers.SlugRelatedField(slug_field='name', read_only=True)
-    machine = serializers.SlugRelatedField(slug_field='id_num', read_only=True)
-    service_company = serializers.SlugRelatedField(slug_field='name', read_only=True)
 
-    machine_id = serializers.CharField(source="get_machine_id")
-    machine_name = serializers.CharField(source="get_machine_name")
+    type = ReferenceSerializer()
+
+    machine = MachineRestrictedSerializer()
+    service_company = ReferenceSerializer()
+    mt_company = ReferenceSerializer()
+
+    # machine_id = serializers.CharField(source="get_machine_id")
+    # machine_name = serializers.CharField(source="get_machine_name")
 
     class Meta:
         model = Maintenance
@@ -164,6 +135,6 @@ class MaintenanceSerializer(serializers.ModelSerializer):
             'order_date',
             'machine',
             'service_company',
-            'machine_name',
-            'machine_id',
+            'mt_company',
+
         ]
