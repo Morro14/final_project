@@ -12,8 +12,11 @@ export async function machineLoader({ params }) {
             console.log(r);
             return r;
         })
-        .catch((e) => {
-            return e;
+        .catch((r) => {
+            if (r.status !== 200) {
+                console.log(r)
+                throw new Response("Not Found", { status: 404, statusText: r.response.statusText })
+            }
         });
     return data;
 }
@@ -23,7 +26,7 @@ export default function MachineDetials({ params }) {
     const navigate = useNavigate();
 
     function buttonFunction(e) {
-        navigate('/dashboard');
+        navigate(-1);
     }
 
     return !response.data ? (

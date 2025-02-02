@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os.path
 from pathlib import Path
 
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -30,9 +32,35 @@ ALLOWED_HOSTS = []
 CORS_ALLOW_ALL_ORIGINS = True
 
 AUTH_USER_MODEL = 'main.MyUser'
-DATE_INPUT_FORMATS = ["%d/%m/%Y"]
 
-USE_L10N = False
+
+DATETIME_INPUT_FORMATS = ['%Y-%m-%d %H:%M:%S',
+ '%Y-%m-%d %H:%M',
+ '%Y-%m-%d',
+ '%m/%d/%Y %H:%M:%S',
+ '%m/%d/%Y %H:%M',
+ '%m/%d/%Y',
+ '%m/%d/%y %H:%M:%S',
+ '%m/%d/%y %H:%M',
+ '%m/%d/%y'
+
+]
+DATE_INPUT_FORMATS = [
+    "%Y-%m-%d",
+    "%m/%d/%Y",
+    "%m/%d/%y",
+    "%m-%d-%Y",
+    "%m-%d-%y",
+    "%b %d %Y",
+    "%b %d, %Y",
+    "%d %b %Y",
+    "%d %b, %Y",
+    "%B %d %Y",
+    "%B %d, %Y",
+    "%d %B %Y",
+    "%d %B, %Y",
+]
+
 
 
 # Application definition
@@ -50,7 +78,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'rest_framework.authtoken',
-    'drf_spectacular'
+    'drf_spectacular',
+
 
 ]
 REST_FRAMEWORK = {
@@ -61,6 +90,21 @@ REST_FRAMEWORK = {
     'SERVE_INCLUDE_SCHEMA': False,
     # OTHER SETTINGS
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+'DATE_INPUT_FORMATS':
+    ["%Y-%m-%d",
+    "%m/%d/%Y",
+    "%m/%d/%y",
+    "%m-%d-%Y",
+    "%m-%d-%y",
+    "%b %d %Y",
+    "%b %d, %Y",
+    "%d %b %Y",
+    "%d %b, %Y",
+    "%B %d %Y",
+    "%B %d, %Y",
+    "%d %B %Y",
+    "%d %B, %Y",]
+
 }
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -141,7 +185,7 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
-USE_I18N = True
+USE_I18N = False
 
 USE_TZ = True
 

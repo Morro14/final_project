@@ -1,7 +1,7 @@
 
 
 
-export default function TableFilter({ label, name, options, type, id, selectHandle }) {
+export default function TableFilterEntities({ label, name, options, type, id, selectHandle }) {
 
     return (
         <div className="filter-select-container">
@@ -17,10 +17,10 @@ export default function TableFilter({ label, name, options, type, id, selectHand
                         onChange={selectHandle}
 
                     >
-                        <option className="filter-select-default">не применять фильтр</option>
+
                         {options.map((o) => (
 
-                            <option key={"filter-opt" + o.id} value={o.id} id={o.id}>{o.name}</option>
+                            <option key={"filter-opt" + o.id} value={o.name} id={o.id}>{o.name}</option>
                         ))}
                     </select>
 

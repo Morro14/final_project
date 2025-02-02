@@ -1,10 +1,10 @@
 import {
-  redirect,
   useLoaderData,
+  useNavigate,
   useOutletContext,
   useParams,
 } from "react-router-dom";
-import { nameDict, textareaFields, choiceFields, dateFields, datetimeFields, addFormFields, categoryFieldToDetails } from "../../utils/names";
+import { nameDict, textareaFields, choiceFields, dateFields, datetimeFields, categoryFieldToDetails } from "../../utils/names";
 import { Form } from "react-router-dom";
 import "../../styles/AddForm.css";
 import axios from "axios";
@@ -13,34 +13,95 @@ import { serverURL } from "../../App";
 
 import { FormProvider, useForm } from "react-hook-form";
 import { Input } from "./form_components/Input";
+import { DateTimeInput } from "./form_components/DateTimeInput";
 import { TextArea } from "./form_components/TextArea";
 import { Select } from "./form_components/Select";
 import { dateValidationObj, inputValidation, timeValidationObj } from "./form_components/Validations";
+import { getOptions } from "../../utils/addFormFields";
+import { useState, useEffect } from "react";
+import { AddFormSuccess } from "./AddFormSuccess";
 
 
-export async function formLoader() {
-  const data = axios
-    .get(serverURL + "/details")
+export async function formLoader({ params }) {
+  const category = params.category;
+  const data = await axios
+    .get(serverURL + "/create/" + category)
     .then((r) => {
+
       return r;
+
     })
-    .catch((e) => {
-      return e;
+    .catch((r) => {
+      if (r.status !== 200) {
+        throw new Response("Not Found", { status: 404, statusText: r.response.statusText })
+      }
     });
-  return data;
+  const schemaData = await axios
+    .options(serverURL + '/' + category + 's')
+    .then((r) => {
+
+      return r
+    })
+    .catch((r) => {
+      if (r.status !== 200) {
+        throw new Response("Not Found", { status: 404, statusText: r.response.statusText })
+      }
+    });
+  return [data, schemaData];
 }
 
 export default function AddForm() {
   const methods = useForm();
-  const client = useOutletContext().client;
+  const client = useOutletContext().client
   const category = useParams("category").category;
-  const onSubmit = methods.handleSubmit(data => {
-    console.log(data)
-    data.client = client.id;
-    axios.post(serverURL + '/create/' + category, data)
+
+  const [addSuccess, setAddSuccess] = useState()
+  const [data, schemaData] = useLoaderData();
+  const [formDataF, setFormDataF] = useState();
+  console.log(addSuccess, formDataF)
+  const userRef = data.data.user_ref.ref_type
+  let options = getOptions(category, data.data, userRef)
+  let formFields = Object.keys(schemaData.data.actions.POST)
+  formFields = formFields.filter(e => e !== 'id')
+
+  switch (userRef) {
+    case 'client':
+      formFields = formFields.filter(e => e !== 'client')
+    case 'service_company' || 'service':
+      formFields = formFields.filter(e => e !== 'service_company')
+  }
+
+  const onSubmit = methods.handleSubmit(formData => {
+    console.log('handleSubmit', formData)
+    setFormDataF(formData)
+
+    switch (userRef) {
+      case 'client':
+        formData.client = data.data.user_ref.name
+      case 'service_company' || 'service':
+        formData.service_company = data.data.user_ref.name
+    }
+
+    axios
+      .post(serverURL + '/create/' + category, formData)
+      .then(r => {
+        console.log('post response', r)
+        if (r.status === 200) {
+          setAddSuccess('200')
+
+        }
+      }
+      )
+      .catch((r) => {
+        console.log('post error', r.status)
+        window.scrollTo(0, 0)
+        setAddSuccess('406')
+
+      }
+
+      )
   })
 
-  const choices = useLoaderData().data;
 
   const titleCategoty = {
     reclamation: "рекламации",
@@ -57,7 +118,6 @@ export default function AddForm() {
           label={nameDict[field]}
           type="text"
           id={field}
-          // placeholder={nameDict[field]}
           key={"textarea" + field}
           maxLength={220}
           validation={inputValidation}
@@ -65,22 +125,21 @@ export default function AddForm() {
 
         ></TextArea>
       );
-    } else if (choiceFields.includes(detailField)) {
-
-      let options = [];
-
-      choices.map((c) => {
-        if (c.ref_type === detailField) {
-          options.push(c);
-        }
-      });
+    } else if (choiceFields[category].includes(detailField)) {
+      let optionsF = []
+      if (detailField === 'machine') {
+        optionsF = options.machines
+      } else {
+        optionsF = options[detailField]
+      }
+      const optionsMapped = optionsF
 
       return (
         <Select
           label={nameDict[field]}
           type="select"
           id={field}
-          options={options}
+          options={optionsMapped}
           name={field}
         >
         </Select>
@@ -102,26 +161,26 @@ export default function AddForm() {
       return (
         <div className="datetime-el">{nameDict[field]}
           <div className="datetime-container">
-            <Input
+            <DateTimeInput
               label={"Дата"}
               name={field + "-date"}
               type="date_"
               id={field + "-date"}
-              placeholder={nameDict[field]}
+              placeholder="dd/mm/yyyy"
               key={"inpt" + field + "-date"}
               validation={dateValidationObj}
 
-            ></Input>
-            <Input
+            ></DateTimeInput>
+            <DateTimeInput
               label={"Время"}
               name={field + "_time"}
               type="time_"
               id={field + "_time"}
-              placeholder={nameDict[field]}
+              placeholder="hh:mm"
               key={"inpt" + field + "_time"}
               validation={timeValidationObj}
 
-            ></Input>
+            ></DateTimeInput>
           </div>
         </div>
       );
@@ -141,17 +200,20 @@ export default function AddForm() {
       );
     }
   };
+  const errorMsg = addSuccess !== '200' ? 'Не удалось добавить данные' : ''
 
-  return (
+
+  return addSuccess === '200' ? (<AddFormSuccess formData={formDataF}></AddFormSuccess>) : (
     <div className="add-form-container">
       <h2 className="add-form-title">Добавить данные о {titleCategoty[category]}</h2>
+      <h4 className="add-form-error-msg">{errorMsg}</h4>
       <FormProvider {...methods}>
         <Form
           onSubmit={e => e.preventDefault()}
           className="add-form"
           noValidate
         >
-          {addFormFields[category].map((f) => (
+          {formFields.map((f) => (
             <div className="add-form-section" key={"add-form-section-" + f}>
 
               {getField(f)}
@@ -165,12 +227,3 @@ export default function AddForm() {
     </div>
   );
 }
-
-// export async function action({ request }) {
-//   const formData = await request.formData();
-//   console.log(formData);
-
-//   // let category = new URL(request.url).searchParams.get("sorting");
-
-//   return redirect("/dashboard/create/report");
-// }

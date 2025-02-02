@@ -9,6 +9,9 @@
 	color: rgb(51, 51, 51);
 	border: solid 1px rgb(155, 155, 155);
 }
+.header-button {
+	margin-left: 8px;
+}
 
 .button:hover {
 	background-color: #dad5c696;
@@ -16,7 +19,7 @@
 }
 
 .button-text {
-	font-size: 16px;
+	font-size: 13px;
 }
 
 .tab-button {

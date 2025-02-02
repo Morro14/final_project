@@ -18,7 +18,7 @@ export const Input = ({ label, type, id, placeholder, validation, name }) => {
 						type={type}
 						className={`input-el ${type}`}
 						// placeholder={placeholder}
-						{...register(name, validation)}>
+						{...register(name,)}>
 					</input>
 					{isInvalid && (Object.keys(inputError).length > 0) && (<InputError message={inputError.error} key={inputError.error}></InputError>)}
 				</div>

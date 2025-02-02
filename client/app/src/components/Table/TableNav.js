@@ -1,7 +1,6 @@
 import {
   useNavigate,
   useParams,
-  Form,
   useLoaderData,
   useOutletContext,
   useSearchParams,
@@ -11,17 +10,19 @@ import TableSorted from "./TableSorted";
 import axios from "axios";
 import { serverURL } from "../../App";
 import { NavLink } from "react-router-dom";
-import { FormProvider } from "react-hook-form";
-import { useForm } from "react-hook-form";
-import { Select } from "../AddForm/form_components/Select";
-import { formatHeaders } from "../../utils/formatting";
-import { useState } from "react";
+
+import { formatHeaders, formatRowData } from "../../utils/formatting";
 import TableFilter from "./TableFilter";
 import TableSort from "./TableSort";
+import TableFilterEntities from "./TableFilterEntities"
+
+import { useTableCon } from "./TableContext";
+import '../../styles/TableNav.css'
+
 
 
 export async function sortedLoader({ params, request }) {
-  // console.log("table loader", params);
+  const category = params.value;
   let sorting = new URL(request.url).searchParams.get("sorting");
   let filter = new URL(request.url).searchParams.get("filter");
 
@@ -44,31 +45,34 @@ export async function sortedLoader({ params, request }) {
 
   const filterURL = filter ? `&filter=${filter}` : ""
   const sortingURL = sorting ? `?sorting=${sorting}` : ""
-  const requestURL = serverURL + `/dashboard/${params.value}${sortingURL}${filterURL}`
-  console.log(requestURL)
+  const requestURL = serverURL + "/dashboard/" + category + sortingURL
+
 
   const data = await axios
     .get(requestURL)
     .then((r) => {
       return r;
     })
-    .catch((e) => {
-      return e;
+    .catch((r) => {
+      if (r.status !== 200) {
+        console.log(r)
+        throw new Response("Not Found", { status: 404, statusText: r.response.statusText })
+      }
     });
   return data;
 }
 
-export default function TableNav({ params }) {
-
-  const navigate = useNavigate();
+export default function TableNav() {
+  const category = useParams("value").value;
+  const navigate = useNavigate()
+  const tableContext = useTableCon();
+  const { filterCategory, filterEntity } = tableContext
   const tabActive = useParams().value;
   const client = useOutletContext().client;
   const data = useLoaderData();
-  const [searchParams, setSearchParams] = useSearchParams();
-  console.log(data)
-  console.log('searchParams', searchParams.get("filter"))
+  const unsortedData = data.data[tabActive];
+  let tableData = unsortedData;
 
-  const sortedList = data.data.sorted_list;
   const getTableTitle = (tabActive) => {
     const names = {
       machines: "Техника",
@@ -79,42 +83,71 @@ export default function TableNav({ params }) {
       return names[tabActive];
     }
   };
-  const formattedData = formatHeaders(sortedList[0])
-  // TODO no sorted list exception
+
+  const formattedData = formatHeaders(unsortedData[0])
+  // TODO no unsorted list exception
   const sortNames = Object.keys(formattedData);
+
   const sortOptions = sortNames.map((n) => ({ "name": nameDict[n], "id": n }))
 
   const filterNames = filterFields[tabActive]
   const filterOptions = filterNames.map((n) => ({ "name": nameDict[n], "id": n }))
 
+  let filterEntities = [];
+  if (filterCategory !== "") {
+    unsortedData.forEach((e) => {
+      const formattedEl = formatRowData(e)
+      filterEntities.push(formattedEl[filterCategory])
+    })
+    let setF = new Set(filterEntities)
+    filterEntities = [...setF]
+  }
 
-  const [tableParams, setTableParams] = useState({ filter: searchParams.get("filter") || "", sorting: searchParams.get("sorting") || "" })
+  filterEntities = filterEntities.map((n, i) => ({ "name": n, "id": i }))
 
-  const handleFilterSelect = (e) => {
+
+  if (filterEntity !== "") {
+
+    const sortedData = unsortedData.filter(el => {
+      const formattedEl = formatRowData(el)
+      return formattedEl[filterCategory] === filterEntity
+    })
+    tableData = sortedData
+  }
+
+  const handleFilterCatSelect = (e) => {
     e.preventDefault();
-    setTableParams({ ...{ filter: e.target.value, sorting: searchParams.get("sorting") } })
-    const sorting = tableParams.sorting === "" ? "" : `&sorting=${tableParams.sorting}`
-    navigate(`/dashboard/${tabActive}?filter=${e.target.value}${sorting}`);
+    tableContext.setFilterEntity('')
+    tableContext.setFilterCategory(e.target.value)
+
+  };
+
+  const handleFilterEntSelect = (e) => {
+    e.preventDefault();
+    tableContext.setFilterEntity(e.target.value)
   };
 
   const handleSortingSelect = (e) => {
     e.preventDefault();
-    setTableParams({ ...{ sorting: e.target.value } })
-    const filter = tableParams.filter === "" ? "" : `filter=${tableParams.filter}`
-    navigate(`/dashboard/${tabActive}?${filter}&sorting=${e.target.value}`);
+    navigate('/dashboard/' + category + '?sorting=' + e.target.value)
+    tableContext.setSorting(e.target.value)
   };
+  const checkGroup = (client) => {
 
+    let check = client.groups.find((g) => g.name === 'Manager')
+    return check;
+  }
+  const managerCheck = checkGroup(client);
 
-
-
-
-  return sortedList.length === 0 ? (
+  return unsortedData.length === 0 ? (
     <div className="table-error-msg">Данных не найдено</div>
   ) : (
     <div className="table-container-main">
-      <h1 className="dashboard-title">{client.name}</h1>
+
+      <h1 className="dashboard-title">{managerCheck ? 'Менеджер ' + client.name : client.name}</h1>
       <h4 className="dashboard-info">
-        Информация о комплектации и характеристиках вашей техники
+        {managerCheck ? 'Просмотр всех данных' : 'Информация о комплектации и характеристиках вашей техники'}
+
       </h4>
       <div className="tab-bar">
         <div className="tab-bar-left">
@@ -132,19 +165,32 @@ export default function TableNav({ params }) {
           Добавить данные
         </NavLink>
       </div>
-      <div className="dashboard-topbar">
-        <h3 className="dashboard-table-title">{getTableTitle(tabActive)}</h3>
+      <div className="nav-container">
+        <div className="nav-title">{getTableTitle(tabActive)}</div>
 
-        <div className="table-nav-right-block">
+        <div className="filter-block">
+          <div className="filter-block-label">фильтровать по: </div>
           <TableFilter
-            label={"фильтровать по: "}
-            id="filter-select"
+            label={"категория"}
+            id="filter-cat-select"
             type="select"
             options={filterOptions}
-            name="filter-select"
-            selectHandle={handleFilterSelect}
+
+            name="filter-cat-select"
+            selectHandle={handleFilterCatSelect}
           >
           </TableFilter>
+          <TableFilterEntities
+            label={"сущность"}
+            id="filter-entity-select"
+            type="select"
+
+            options={filterEntities}
+            name="filter-entity-select"
+            selectHandle={handleFilterEntSelect}
+          >
+          </TableFilterEntities>
+
 
           <TableSort
             label={"сортировать по: "}
@@ -157,7 +203,8 @@ export default function TableNav({ params }) {
           </TableSort>
         </div>
       </div>
-      <TableSorted params={{ tab: tabActive, list: sortedList }}></TableSorted>
+      <TableSorted params={{ tab: tabActive, list: tableData }}></TableSorted>
+
     </div>
   );
 }

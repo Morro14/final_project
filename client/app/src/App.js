@@ -1,5 +1,5 @@
 import "./App.css";
-import Dashboard from "./components/Dashboard.js";
+import Dashboard, { testLoader } from "./components/Dashboard.js";
 import Main from "./components/Main.js";
 
 import SearchResults from "./components/SearchResults.js";
@@ -7,8 +7,8 @@ import Search from "./components/Search.js";
 import RefDetials, { refLoader } from "./components/RefDetails.js";
 
 import { detailsLoader } from "./components/SearchResults.js";
-import Authorization from "./components/Authorization.js";
-import PrivatRoute from "./components/PrivatRoute.js";
+import Authorization from "./components/Auth/Authorization.js";
+import PrivatRoute from "./components/Auth/PrivatRoute.js";
 import axios from "axios";
 import { dashboardLoader } from "./components/Dashboard.js";
 
@@ -26,6 +26,9 @@ import AddForm, { formLoader } from "./components/AddForm/AddForm.js";
 import AddFormReport from "./components/AddForm/AddFormReport.js";
 import AddFormIndex from "./components/AddForm/AddFormIndex.js";
 import MachineDetails, { machineLoader } from "./components/MachineDetails.js";
+import ErrorComp from "./components/Errors/ErrorComp.js";
+import { ErrorBoundary } from "./components/Errors/ErrorBoundary.js";
+import { AddFormSuccess } from "./components/AddForm/AddFormSuccess.js";
 
 export const serverURL = "http://127.0.0.1:8000/api";
 
@@ -43,23 +46,26 @@ axios.interceptors.request.use(
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route>
-      <Route path="/" element={<Main />}>
+      <Route path="/" element={<Main />} errorElement={<ErrorBoundary />}>
         <Route path="/" element={<Search />}>
           <Route
             path="/search/:id"
             element={<SearchResults />}
             loader={detailsLoader}
+            errorElement={<ErrorComp></ErrorComp>}
           ></Route>
         </Route>
         <Route
           path="/details/:value"
           element={<RefDetials />}
           loader={refLoader}
+          errorElement={<ErrorComp></ErrorComp>}
         ></Route>
         <Route
           path="/details/machines/:value"
           element={<MachineDetails />}
           loader={machineLoader}
+          errorElement={<ErrorComp></ErrorComp>}
         ></Route>
         <Route path="/auth" element={<Authorization />}></Route>
 
@@ -69,19 +75,25 @@ const router = createBrowserRouter(
             element={<Navigate to={"/dashboard/machines"} />}
           ></Route>
 
-          <Route element={<Dashboard />} loader={dashboardLoader}>
-            <Route
+          <Route element={<Dashboard />}
+            loader={dashboardLoader}
 
+            errorElement={<ErrorComp></ErrorComp>}>
+            <Route
               loader={formLoader}
               path={"/dashboard/create/:category"}
               element={<AddForm />}
+              errorElement={<ErrorComp></ErrorComp>}
             ></Route>
+
             <Route
               path={"/dashboard/create/"}
               element={<AddFormIndex />}
+              errorElement={<ErrorComp></ErrorComp>}
             ></Route>
             <Route
               loader={sortedLoader}
+              errorElement={<ErrorComp></ErrorComp>}
               element={<TableNav />}
               path="/dashboard/:value"
             ></Route>

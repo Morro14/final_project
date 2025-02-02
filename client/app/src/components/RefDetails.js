@@ -4,14 +4,18 @@ import { serverURL } from "../App";
 import { useNavigate } from "react-router-dom";
 
 export async function refLoader({ params }) {
+  console.log('ref param', params.value)
+  const valueEnc = encodeURIComponent(params.value).replace(/%2F/g, "%252F");
   const data = await axios
 
-    .get(`${serverURL}/details/${params.value}`)
+    .get(`${serverURL}/ref/${valueEnc}`)
     .then((r) => {
       return r;
     })
-    .catch((e) => {
-      return e;
+    .catch((r) => {
+      if (r.status !== 200) {
+        throw new Response("Not Found", { status: 404, statusText: r.response.statusText })
+      }
     });
   return data;
 }

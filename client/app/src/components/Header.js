@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../media/Logotype_accent.png";
 import telegram_logo from "../media/telegram_logo.png";
-import { useAuth } from "./AuthProvider";
+import { useAuth } from "./Auth/AuthProvider";
 
 export default function Header({ params }) {
   const [displayValue, setDisplayValue] = useState("");
@@ -56,17 +56,22 @@ export default function Header({ params }) {
             {/* <img className="telegram-logo" src={telegram_logo}></img> */}
             <div className="telegram-num">Telegram: +7-8352-20-12-09</div>
           </div>
-          <Link to="/dashboard/machines">
-            <div className={`profile_icon ${displayValue}`}>
-              <div className="tooltip">Профиль</div>
-              <div className="P">П</div>
-            </div>
+          <Link to="/">
+            <button className={`button header-button`}>
+              Главная
+            </button>
           </Link>
-          <div className="button login-button" onClick={buttonFucntion}>
+          <Link to="/dashboard/machines">
+            <button className={`profile-button button header-button ${displayValue}`}>
+              Профиль
+            </button>
+          </Link>
+          <button className="button login-button header-button" onClick={buttonFucntion}>
             <div className="button-text login-button-text">
               {loginButtonText}
             </div>
-          </div>
+          </button>
+
         </div>
         {/* </div> */}
       </div>

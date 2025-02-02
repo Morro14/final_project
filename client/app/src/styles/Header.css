@@ -1,96 +1,96 @@
 .header {
-  border-bottom: 1px solid #153e6c8c;
-  height: 56px;
-  display: flex;
-  justify-content: center;
+	border-bottom: 1px solid #153e6c8c;
+	height: 56px;
+	display: flex;
+	justify-content: center;
 
-  font-family: "PT Astra Sans", serif;
-  font-weight: normal;
+	font-family: "PT Astra Sans", serif;
+	font-weight: normal;
 }
 
 .header__logo {
-  position: relative;
-  bottom: -1px;
+	position: relative;
+	bottom: -1px;
 }
 
 .header__logo img {
-  height: 60px;
+	height: 60px;
 }
 
 .header__title {
-  color: #153e6c;
-  text-align: left;
+	color: #153e6c;
+	text-align: left;
 }
 
 .title-line-1 {
-  font-size: 32px;
-  position: relative;
-  bottom: -4px;
+	font-size: 32px;
+	position: relative;
+	bottom: -4px;
 }
 
 .title-line-2 {
-  padding-left: 2px;
-  font-size: 16px;
-  text-wrap: nowrap;
-  position: relative;
-  bottom: 4px;
+	padding-left: 2px;
+	font-size: 16px;
+	text-wrap: nowrap;
+	position: relative;
+	bottom: 4px;
 }
 
 .top-bar {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  justify-content: end;
-  font-size: 16px;
-  position: relative;
+	display: flex;
+	align-items: center;
+	width: 100%;
+	justify-content: end;
+	font-size: 16px;
+	position: relative;
 }
 
 .top-bar__link {
-  height: 32px;
-  display: flex;
-  align-items: center;
-  color: #153e6c;
-  margin-right: 2rem;
+	height: 32px;
+	display: flex;
+	align-items: center;
+	color: #153e6c;
+	margin-right: 2rem;
 }
 
 .telegram-logo {
-  height: 22px;
-  width: 22px;
+	height: 22px;
+	width: 22px;
 }
 
 .header-container-middle {
-  justify-content: left;
+	justify-content: left;
 }
 
 .profile_icon {
-  height: 40px;
-  width: 40px;
-  background-color: #ebe6d6;
-  border-radius: 50%;
-  margin-right: 15px;
-  align-items: center;
-  justify-content: center;
-  .P {
-    text-align: center;
-    font-size: 22px;
-    color: #153e6c;
-  }
+	height: 40px;
+	width: 40px;
+	background-color: #ebe6d6;
+	border-radius: 50%;
+	margin-right: 15px;
+	align-items: center;
+	justify-content: center;
+	.P {
+		text-align: center;
+		font-size: 22px;
+		color: #153e6c;
+	}
 }
 
 .shown {
-  display: flex;
+	display: flex;
 }
 
 .hidden {
-  display: none;
+	display: none;
 }
 .tooltip {
-  top: 60px;
+	top: 60px;
 }
 .profile_icon:hover .tooltip {
-  visibility: visible;
-  transition: 0.25s all ease;
-  transition-delay: 0.25s;
-  top: 55px;
-  opacity: 1;
+	visibility: visible;
+	transition: 0.25s all ease;
+	transition-delay: 0.25s;
+	top: 55px;
+	opacity: 1;
 }

@@ -1,5 +1,5 @@
-import "../styles/Authorization.css";
-import "../styles/Buttons.css";
+import "../../styles/Authorization.css";
+import "../../styles/Buttons.css";
 
 import { useState } from "react";
 import { useAuth } from "./AuthProvider.js";
@@ -27,9 +27,14 @@ export default function Authorization(params) {
       [name]: value,
     }));
   };
+
   let authErrorMsg = "";
-  if (auth.exception !== "") {
+  if (auth.loading) {
+    authErrorMsg = "loading..."
+  } else if (auth.exception === "401") {
     authErrorMsg = "Неверные данные";
+  } else if (auth.exception === "server error") {
+    authErrorMsg = "Не удалось авторизироваться";
   }
 
   return (

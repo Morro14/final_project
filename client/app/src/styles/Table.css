@@ -1,0 +1,41 @@
+.table-container {
+	overflow-x: scroll;
+	overflow-y: hidden;
+
+	padding-bottom: 25px;
+}
+.table-inner {
+	border-color: #153e6c79;
+	border-collapse: collapse;
+	text-align: left;
+	font-weight: normal;
+	color: rgb(51, 51, 51);
+}
+
+.fade-sides {
+	mask-image: linear-gradient(
+		to right,
+		transparent 0%,
+		black 24px,
+		black calc(100% - 24px),
+		transparent 100%
+	);
+}
+.fade-left {
+	mask-image: linear-gradient(
+		to left,
+		transparent 0%,
+		black 0px,
+		black calc(100% - 24px),
+		transparent 100%
+	);
+}
+.fade-right {
+	mask-image: linear-gradient(
+		to right,
+		transparent 0%,
+		black 0px,
+		black calc(100% - 24px),
+		transparent 100%
+	);
+}

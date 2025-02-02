@@ -1,7 +1,24 @@
+import datetime
+from time import strftime
+
 from django import forms
 from .models import Reference, Machine, Reclamation, Maintenance, MyUser
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.conf import settings
+
+
+datetime_formats = settings.DATETIME_INPUT_FORMATS
+
+datetime_formats_str = 'Formats: '
+for f in datetime_formats:
+    f_datetime = datetime.datetime.strftime(datetime.datetime.now(), f)
+    datetime_formats_str += (f_datetime + ' | ')
+
+date_formats = settings.DATE_INPUT_FORMATS
+date_formats_str = 'Formats: '
+for f in date_formats:
+    f_date = datetime.datetime.strftime(datetime.datetime.now(), f)
+    date_formats_str += (f_date + ' | ')
 
 
 class MyUserCreationForm(UserCreationForm):
@@ -33,7 +50,12 @@ class ReferenceForm(forms.ModelForm):
 
 
 class MachineModelForm(forms.ModelForm):
-    shipment_date = forms.DateField(input_formats=settings.DATE_INPUT_FORMATS)
+    shipment_date = forms.DateField(help_text=date_formats_str)
+    id_num = forms.CharField(label='Serial number')
+    engine_id = forms.CharField(label='Engine serial number')
+    transmission_id = forms.CharField(label='Transmission serial number')
+    steerable_bridge_id = forms.CharField(label=' Steerable bridge serial number')
+    main_bridge_id = forms.CharField(label='Main bridge serial number')
 
     class Meta:
         model = Machine
@@ -58,8 +80,9 @@ class MachineModelForm(forms.ModelForm):
 
 
 class ReclamationModelForm(forms.ModelForm):
-    refuse_date = forms.DateTimeField(localize=True, label='Refuse date and time', initial='dd/mm/yyyy hh:mm:ss')
-    recovery_date = forms.DateTimeField(label='Recovery date and time', initial='dd/mm/yyyy hh:mm:ss')
+
+    refuse_date = forms.DateTimeField(label='Refuse date and time', help_text=datetime_formats_str)
+    recovery_date = forms.DateTimeField(label='Recovery date and time', help_text=datetime_formats_str)
     operating_time = forms.CharField(label='Operating time, m/h')
 
 
@@ -81,8 +104,8 @@ class ReclamationModelForm(forms.ModelForm):
 
 
 class MaintenanceModelForm(forms.ModelForm):
-    mt_date = forms.DateField(label='Maintenance date', input_formats=settings.DATE_INPUT_FORMATS)
-    order_date = forms.DateField(label='Oder date', input_formats=settings.DATE_INPUT_FORMATS)
+    mt_date = forms.DateField(label='Maintenance date', help_text=date_formats_str)
+    order_date = forms.DateField(label='Oder date', help_text=date_formats_str)
 
 
 

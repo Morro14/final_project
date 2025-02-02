@@ -25,12 +25,12 @@ export const dateValidationObj = {
 export const dateValidation = (value) => {
 
     const isValid = validator.isDate(value, {
-        format: "DD/MM/YYYY",
+        format: "MM-DD-YYYY",
 
         strictMode: true
     })
-    const errorMessage = "date format must be DD/MM/YYYY"
-    console.log('date validation', isValid)
+    const errorMessage = "date format must be MM-DD-YYYY"
+
     return isValid || errorMessage
 }
 
@@ -48,6 +48,6 @@ export const timeValidation = (value) => {
         strictMode: true
     })
     const errorMessage = "time format must be HH:MM"
-    console.log('time validation', isValid)
+
     return isValid || errorMessage
 }

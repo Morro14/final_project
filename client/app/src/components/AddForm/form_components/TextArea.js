@@ -17,7 +17,7 @@ export const TextArea = ({ label, type, id, placeholder, validation, name }) => 
                         type={type}
                         className="textarea-el"
                         placeholder={placeholder}
-                        {...register(name, validation)}>
+                        {...register(name,)}>
                     </textarea>
                     {isInvalid && (Object.keys(inputError).length > 0) && (<InputError message={inputError.error} key={inputError.error}></InputError>)}
                 </div>

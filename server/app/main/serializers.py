@@ -1,8 +1,11 @@
-from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
+from rest_framework.validators import UniqueValidator
+
 from .models import Machine, Maintenance, Reclamation, Reference
-from rest_framework import permissions
+from django.contrib.auth.models import Group
+from django.urls import resolve
+from urllib.parse import unquote
 
 class ReferenceSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,23 +13,47 @@ class ReferenceSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class MachineSerializer(serializers.ModelSerializer):
-    client = ReferenceSerializer()
-    model = ReferenceSerializer()
-    engine_model = ReferenceSerializer()
-    transmission_model = ReferenceSerializer()
-    main_bridge_model = ReferenceSerializer()
-    steerable_bridge_model = ReferenceSerializer()
-    service_company = ReferenceSerializer()
-    # shipment_date = serializers.DateField(format='%d/%m/%Y', input_formats=['%d/%m/%Y'])
-
-    sorting_fields = serializers.SerializerMethodField()
-
+    client = serializers.SlugRelatedField(
+        slug_field='name',
+        queryset=Reference.objects.all()
+    )
+    model = serializers.SlugRelatedField(
+        slug_field='name',
+        queryset=Reference.objects.all()
+    )
+    engine_model = serializers.SlugRelatedField(
+        slug_field='name',
+        queryset=Reference.objects.all()
+    )
+    transmission_model = serializers.SlugRelatedField(
+        slug_field='name',
+        queryset=Reference.objects.all()
+    )
+    main_bridge_model = serializers.SlugRelatedField(
+        slug_field='name',
+        queryset=Reference.objects.all()
+    )
+    steerable_bridge_model = serializers.SlugRelatedField(
+        slug_field='name',
+        queryset=Reference.objects.all()
+    )
+    service_company = serializers.SlugRelatedField(
+        slug_field='name',
+        queryset=Reference.objects.all()
+    )
+    id_num = serializers.CharField(validators=[UniqueValidator(queryset=Machine.objects.all())])
+    # sorting_fields = serializers.SerializerMethodField()
     @extend_schema_field({'type': 'array', 'items': {'type', 'string'}})
     def get_sorting_fields(self, obj):
         sorting_fields_dict = ['model', 'engine_model', 'transmission_model', 'main_bridge_model',
                                'steerable_bridge_model', 'id_num', ]
         sorting_field = sorting_fields_dict
         return sorting_field
+
+    def create(self, validated_data):
+        machine = Machine(**validated_data)
+        machine.save()
+        return machine
 
     class Meta:
         model = Machine
@@ -48,7 +75,7 @@ class MachineSerializer(serializers.ModelSerializer):
                   'equipment_add',
                   'client',
                   'service_company',
-                  'sorting_fields'
+
                   ]
 
 
@@ -138,3 +165,12 @@ class MaintenanceSerializer(serializers.ModelSerializer):
             'mt_company',
 
         ]
+class GroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        fields = ['name']
+
+
+
+class DateSerializer(serializers.Serializer):
+    date = serializers.DateField()

@@ -33,7 +33,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
 
 class Reference(models.Model):
     types = {
-        'service': 'Service company',
+        'service_company': 'Service company',
         'client': 'Client',
         'machine_model': ' Machine model',
         'engine_model': 'Engine model',
@@ -46,6 +46,7 @@ class Reference(models.Model):
         'maintenance_type': 'Maintenance type'
 
     }
+
 
     def __str__(self):
         return self.name

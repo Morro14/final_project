@@ -3,8 +3,7 @@ import { serverURL } from "../App.js";
 import "../styles/SearchResults.css";
 import "../styles/Tooltip.css";
 import { useLoaderData } from "react-router-dom";
-import ErrorComp from "./ErrorComp.js";
-import { Link } from "react-router-dom";
+import ErrorComp from "./Errors/ErrorComp.js";
 import { linkNames, nameDict } from "../utils/names.js";
 import { formatRowData, getLink } from "../utils/formatting.js";
 
@@ -14,14 +13,14 @@ export async function detailsLoader({ params }) {
     .get(`${serverURL}/machines/${params.id}`)
     .then((r) => {
       data = r;
-      console.log("getting /machines response", r);
+
     })
     .catch((e) => {
-      if (e.response.status !== 401) {
-        data = e;
+      if (e.status !== 401) {
+        throw new Response("Not Found", { status: 404, statusText: e.response.statusText })
       }
     });
-  console.log("data", data);
+
   if (!data) {
     console.log("sending restricted request");
     await axios
@@ -30,9 +29,9 @@ export async function detailsLoader({ params }) {
         data = r;
       })
       .catch((e) => {
-        console.log("Error", e.response.status);
-
-        data = e;
+        if (e.status !== 200) {
+          throw new Response("Not Found", { status: 404, statusText: e.response.statusText })
+        }
       });
   }
 

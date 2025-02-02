@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { datetimeFields, dateFields } from "./names";
+import { datetimeFields, dateFields, linkNames } from "./names";
 
 export const formatHeaders = (data) => {
     // format data for table headers
@@ -21,6 +21,7 @@ export const formatRowData = (data) => {
         }
     })
     let formatted = {}
+
     Object.keys(rest).map((k) => {
         if (!rest[k]) {
             formatted[k] = "отсутствует"
@@ -35,18 +36,21 @@ export const formatRowData = (data) => {
     return formatted;
 };
 
-export const getLink = (key, value, namesList) => {
+export const getLink = (key, value) => {
     // render links if the value is in "namesList"
-    const found = namesList.find((k) => key === k);
+    const found = linkNames.find((k) => key === k);
     if (value === 'отсутствует') {
         return value;
+    } else if (key === "machine") {
+
+        const valueEnc = encodeURIComponent(value).replace(/%2F/g, "%252F");
+
+        return <Link to={`/details/machines/${valueEnc}`}>{value}</Link>;
     }
     else if (found) {
-        const valueEnc = encodeURIComponent(value);
+
+        const valueEnc = encodeURIComponent(value).replace(/%2F/g, "%252F");
         return <Link to={`/details/${valueEnc}`}>{value}</Link>;
-    } else if (key === "id_num") {
-        const valueEnc = encodeURIComponent(value);
-        return <Link to={`/details/machines/${valueEnc}`}>{value}</Link>;
     }
     return value;
 };

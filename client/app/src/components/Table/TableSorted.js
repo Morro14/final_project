@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import { datetimeFields, dateFields, nameDict, linkNames } from "../../utils/names";
-import { formatHeaders, formatRowData } from "../../utils/formatting";
+import { formatHeaders, formatRowData, getLink } from "../../utils/formatting";
 import { useState } from "react";
+import '../../styles/Table.css'
 
 export default function TableSorted({ params }) {
   const tabActive = params.tab;
@@ -10,26 +11,13 @@ export default function TableSorted({ params }) {
     return nameDict[name_prev];
   };
 
-  const getLink = (key, value) => {
-    const found = linkNames.find((k) => key === k);
-    if (value === 'отсутствует') {
-      return value;
-    }
-    else if (found) {
-      const valueEnc = encodeURIComponent(value);
-      return <Link to={`/details/${valueEnc}`}>{value}</Link>;
-    } else if (key === "id_num") {
-      const valueEnc = encodeURIComponent(value);
-      return <Link to={`/details/machines/${valueEnc}`}>{value}</Link>;
-    }
-    return value;
-  };
+
   const [scrollPosition, setScrollPosition] = useState('left')
   const handleScroll = (e) => {
 
     const { scrollLeft, scrollLeftMax } = e.target;
     // console.log(e.target)
-    console.log(scrollLeft, scrollLeftMax)
+
     if (scrollLeft === 0) {
       setScrollPosition('left')
     } else if (scrollLeft === scrollLeftMax) {
@@ -40,7 +28,7 @@ export default function TableSorted({ params }) {
 
   }
 
-  console.log(scrollPosition)
+
   const fadeClass = () => {
     switch (scrollPosition) {
       case 'left':
@@ -50,11 +38,12 @@ export default function TableSorted({ params }) {
     }
     return 'fade-sides'
   }
-
-  return (
+  return !sortedData[0] ? (
+    <div>Нет Данных</div>
+  ) : (
     <>
-      <div className={`dashboard-table-container ${fadeClass()}`} onScroll={handleScroll}>
-        <table className={`dashboard-table ${tabActive}-table table`}>
+      <div className={`table-container ${fadeClass()}`} onScroll={handleScroll}>
+        <table className={`table-inner ${tabActive}-table table`}>
           <thead>
             <tr>
               {Object.entries(formatHeaders(sortedData[0])).map(([key, value]) => (

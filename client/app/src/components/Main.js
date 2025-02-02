@@ -4,7 +4,7 @@ import "../styles/Buttons.css";
 import Footer from "./Footer.js";
 
 import Header from "./Header.js";
-import AuthProvider from "./AuthProvider.js";
+import AuthProvider from "./Auth/AuthProvider.js";
 
 export default function Main() {
   return (

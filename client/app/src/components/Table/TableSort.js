@@ -9,7 +9,7 @@ export default function TableSort({ label, name, options, type, id, selectHandle
                 <div className="sort-select-inner">
                     <select id={id}
                         type={type}
-                        className="sort-select-el"
+                        className="sort-select-el table-select-el"
                         name={name}
                         onChange={selectHandle}
                     >

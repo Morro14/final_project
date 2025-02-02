@@ -18,7 +18,7 @@
 	display: flex;
 }
 .textarea-el {
-	width: 240px;
+	width: 220px;
 	height: 80px;
 	resize: none;
 }
@@ -63,6 +63,14 @@
 	width: 102px;
 }
 
-.time_-container {
-	margin-left: 8px;
+.time_-label-container {
+	margin-left: 9px;
+}
+
+.datetime-label {
+	font-size: 12px;
+}
+
+.add-form-error-msg {
+	color: rgb(226, 55, 66);
 }

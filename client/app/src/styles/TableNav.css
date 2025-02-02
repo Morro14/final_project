@@ -1,0 +1,53 @@
+.nav-container {
+	display: flex;
+	align-items: center;
+	color: rgb(51, 51, 51);
+	width: 100%;
+	min-width: 360px;
+	justify-content: space-between;
+	border-top: 1px solid;
+	border-bottom: 1px solid;
+	margin: 10px 0 10px 0;
+	padding: 10px 0 10px 0;
+}
+
+.filter-block {
+	display: flex;
+	align-items: center;
+}
+.filter-block > div {
+	margin-right: 15px;
+}
+.nav-label-container {
+	display: flex;
+	align-items: center;
+}
+.table-nav-right-block > div {
+	margin-left: 20px;
+}
+.sort-select-container {
+	margin-left: 20px;
+}
+.nav-label {
+	margin-right: 8px;
+	font-size: 14px;
+}
+.sort-label {
+	font-size: 16px;
+}
+
+.table-select-el {
+	min-width: 150px;
+	border-radius: 0px;
+	border: solid rgb(51, 51, 51) 1px;
+	font-family: "PT Astra Sans";
+}
+.table-select-el > option {
+	font-family: "PT Astra Sans";
+}
+
+.nav-title {
+	font-size: 20px;
+	font-weight: bold;
+	color: rgb(51, 51, 51);
+}

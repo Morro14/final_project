@@ -45,9 +45,9 @@ export const filterFields = {
     "steerable_bridge_model",
   ],
   maintenances: [
-    "mt_comapny",
-    "service_comapny",
-    "mt_type",
+    "mt_company",
+    "service_company",
+    "type",
     "machine_id",
   ],
   reclamations: [
@@ -103,19 +103,39 @@ export const addFormFields = {
 
 export const textareaFields = ["cargo_receiver", "equipment_add", "failure_description"];
 
-export const choiceFields = [
-  "machine_model",
-  "engine_model",
-  "transmission_model",
-  "main_bridge_model",
-  "steerable_bridge_model",
-  "machine",
-  "failure_node",
-  "recovery_method",
-  "maintenance_type",
-  "service_company",
-  "mt_company"
-];
+export const choiceFields = {
+  machines:
+    [
+      "machine_model",
+      "engine_model",
+      "transmission_model",
+      "main_bridge_model",
+      "steerable_bridge_model",
+      "service_company"],
+  machine:
+    [
+      "machine_model",
+      "engine_model",
+      "transmission_model",
+      "main_bridge_model",
+      "steerable_bridge_model",
+      "service_company",
+      "service",
+      "client"],
+  reclamations:
+    [
+      "service_company",
+      "recovery_method",
+      "failure_node"],
+  maintenances:
+    [
+      "maintenance_type",
+      "service_company"
+    ]
+
+
+}
+
 
 export const dateFields = [
   "mt_date",
@@ -141,7 +161,7 @@ export const categoryFieldToDetails = (field) => {
 };
 
 export const linkNames = [
-  "machine",
+  "model",
   "engine_model",
   "main_bridge_model",
   "steerable_bridge_model",
