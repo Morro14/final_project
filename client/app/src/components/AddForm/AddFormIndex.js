@@ -1,9 +1,21 @@
-import { Link } from "react-router-dom";
+import { Link, useOutletContext, } from "react-router-dom";
 
-export default function AddFormIndex(params) {
-  const buttonNames = ["Техника", "Тех. обслуживание", "Рекламация"];
-  const links = ["machine", "maintenance", "reclamation"];
 
+
+export default function AddFormIndex({ children }) {
+  const buttonNames = ["Техника", "Тех. обслуживание", "Рекламация", "Справочник"];
+  const links = ["machine", "maintenance", "reclamation", "reference"];
+  const { user } = useOutletContext().user
+
+  let reclamationButton = ''
+  if (user.groups.find(g => g.name === 'Manager')) {
+    reclamationButton = <Link
+      className="button add-form-index-button"
+      to={"/dashboard/create/" + links[3]}
+    >
+      {buttonNames[3]}
+    </Link>
+  }
   return (
     <div className="add-form-index">
       <h2>Добавить данные:</h2>
@@ -26,7 +38,9 @@ export default function AddFormIndex(params) {
         >
           {buttonNames[2]}
         </Link>
+        {reclamationButton}
       </div>
+
     </div>
   );
 }

@@ -11,9 +11,6 @@ export default function Header({ params }) {
   const auth = useAuth();
   let loginButtonText = "";
 
-  // let profileIcon = (
-  //   <div className="profile_icon" style={`display: ${displayValue}`}></div>
-  // );
   const navigate = useNavigate();
 
   const handleClick = (e) => {
@@ -21,8 +18,9 @@ export default function Header({ params }) {
   };
 
   let buttonFucntion = handleClick;
-
+  let logoLink = '/'
   if (auth.token) {
+    logoLink = '/dashboard'
     loginButtonText = "Выйти";
     if (displayValue !== "shown") {
       setDisplayValue("shown");
@@ -42,39 +40,42 @@ export default function Header({ params }) {
   return (
     <div className="header">
       <div className="container header-container-middle">
-        <a className="header__logo">
-          <img src={logo}></img>
-        </a>
-        {/* <div className="header-container-middle"> */}
-        <div className="header__title">
+        <Link to={logoLink}>
+          <div className="header-logo">
+            <img src={logo}></img>
+          </div>
+        </Link>
+        <div className="header-title">
           <div className="title-line-1">Мой Силант</div>
           <div className="title-line-2">Электронная сервисная книжка</div>
         </div>
 
         <div className="top-bar">
-          <div className="top-bar__link">
-            {/* <img className="telegram-logo" src={telegram_logo}></img> */}
-            <div className="telegram-num">Telegram: +7-8352-20-12-09</div>
+
+          <div className="top-bar-telegram">
+            Telegram: +7-8352-20-12-09
           </div>
+
           <Link to="/">
             <button className={`button header-button`}>
-              Главная
+              Поиск техники
             </button>
           </Link>
           <Link to="/dashboard/machines">
-            <button className={`profile-button button header-button ${displayValue}`}>
-              Профиль
+            <button className={`header-profile-container profile-button button header-button ${displayValue}`}>
+              <div className="header-user-email">{"Мои данные: " + auth.email}</div>
             </button>
           </Link>
-          <button className="button login-button header-button" onClick={buttonFucntion}>
+
+          <button className="login-button button header-button" onClick={buttonFucntion}>
             <div className="button-text login-button-text">
               {loginButtonText}
             </div>
           </button>
 
         </div>
-        {/* </div> */}
-      </div>
-    </div>
+
+      </div >
+    </div >
   );
 }

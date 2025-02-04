@@ -1,11 +1,10 @@
 import datetime
-from time import strftime
 
 from django import forms
-from .models import Reference, Machine, Reclamation, Maintenance, MyUser
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.conf import settings
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
+from .models import Reference, Machine, Reclamation, Maintenance, MyUser
 
 datetime_formats = settings.DATETIME_INPUT_FORMATS
 
@@ -63,7 +62,7 @@ class MachineModelForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        service_ref_query = Reference.objects.filter(ref_type='service')
+        service_ref_query = Reference.objects.filter(ref_type='service_company')
         client_ref_query = Reference.objects.filter(ref_type='client')
         machine_ref_query = Reference.objects.filter(ref_type='machine_model')
         engine_ref_query = Reference.objects.filter(ref_type='engine_model')
@@ -80,17 +79,13 @@ class MachineModelForm(forms.ModelForm):
 
 
 class ReclamationModelForm(forms.ModelForm):
-
     refuse_date = forms.DateTimeField(label='Refuse date and time', help_text=datetime_formats_str)
     recovery_date = forms.DateTimeField(label='Recovery date and time', help_text=datetime_formats_str)
     operating_time = forms.CharField(label='Operating time, m/h')
 
-
     class Meta:
         model = Reclamation
         exclude = ('machine_downtime',)
-
-
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -106,9 +101,6 @@ class ReclamationModelForm(forms.ModelForm):
 class MaintenanceModelForm(forms.ModelForm):
     mt_date = forms.DateField(label='Maintenance date', help_text=date_formats_str)
     order_date = forms.DateField(label='Oder date', help_text=date_formats_str)
-
-
-
 
     class Meta:
         model = Maintenance

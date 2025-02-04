@@ -1,9 +1,9 @@
-from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.db import models
 from django.utils import timezone
-from .managers import CustomUserManager
 from django.utils.translation import gettext_lazy as _
-import datetime
+
+from .managers import CustomUserManager
 
 
 # Create your models here.
@@ -23,7 +23,8 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     objects = CustomUserManager()
     types = {
         'client': 'Client',
-        'service': 'Service company'
+        'service': 'Service company',
+        'manager': 'Manager'
     }
 
     user_type = models.TextField(max_length=120, default="not specified", choices=types, verbose_name="User type")
@@ -47,7 +48,6 @@ class Reference(models.Model):
 
     }
 
-
     def __str__(self):
         return self.name
 
@@ -59,6 +59,7 @@ class Reference(models.Model):
 class Machine(models.Model):
     def __str__(self):
         return self.id_num
+
     client = models.ForeignKey(to=Reference, on_delete=models.CASCADE, related_name='machine_client',
                                related_query_name='machine_clients', blank=True, default=None, null=True)
     # TODO
@@ -118,6 +119,7 @@ class Reclamation(models.Model):
 
     def get_downtime(self):
         delta = self.recovery_date - self.refuse_date
+        print(delta, type(delta))
         return delta.days
 
     def get_machine_name(self):
@@ -146,7 +148,6 @@ class Reclamation(models.Model):
     service_company = models.ForeignKey(to=Reference, on_delete=models.CASCADE, related_name='reclamation_ref',
                                         related_query_name='reclamations_ref', blank=True, default=None, null=True)
 
-
     machine = models.ForeignKey(to=Machine, on_delete=models.CASCADE, related_name='reclamation_machine',
                                 related_query_name='reclamation_machines')
 
@@ -160,4 +161,4 @@ class Reclamation(models.Model):
     spare_parts_use = models.TextField(max_length=220)
 
     recovery_date = models.DateTimeField()
-    machine_downtime = models.DurationField(blank=True, null=True)
+    machine_downtime = models.DurationField(blank=True, null=True, editable=False)

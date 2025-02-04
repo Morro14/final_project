@@ -46,13 +46,9 @@ export default function SearchResults() {
 
   const response = useLoaderData();
 
-  const { id, sorting_fields, ...rest } = response.data;
-  const dataNew = rest;
-  const formattedData = formatRowData(response.data)
 
-  return !response.data ? (
-    <ErrorComp response={response}></ErrorComp>
-  ) : (
+  const formattedData = formatRowData(response.data)
+  return (
     <>
       <h2>Результаты поиска:</h2>
       <p className="machine-title">Машина {response.data.id_num}</p>
@@ -73,42 +69,7 @@ export default function SearchResults() {
                 </td>
               </tr>
             ))}
-
-            {/* <tr>
-              {Object.entries(dataNew).map(([key, value]) => (
-                <td key={key}>
-                  {getLink(key, value)}
-
-                  <div className={`tooltip tooltip-${key}`} key={key}>
-                    {value}
-                  </div>
-                </td>
-              ))}
-            </tr> */}
           </tbody>
-
-          {/* <thead>
-            <tr>
-              {Object.entries(dataNew)
-                .slice(8, 17)
-                .map(([key, value]) => (
-                  <th key={key}>{keyNames(key)}</th>
-                ))}
-            </tr>
-            <tr>
-              {Object.entries(dataNew)
-                .slice(8, 17)
-                .map(([key, value]) => (
-                  <td key={key}>
-                    {getLink(key, value)}
-
-                    <div className={`tooltip tooltip-${key}`} key={key}>
-                      {value}
-                    </div>
-                  </td>
-                ))}
-            </tr>
-          </thead> */}
         </table>
       </div>
     </>

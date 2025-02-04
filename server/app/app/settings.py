@@ -12,12 +12,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os.path
 from pathlib import Path
 
-
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -33,16 +29,22 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 AUTH_USER_MODEL = 'main.MyUser'
 
-
-DATETIME_INPUT_FORMATS = ['%Y-%m-%d %H:%M:%S',
- '%Y-%m-%d %H:%M',
- '%Y-%m-%d',
- '%m/%d/%Y %H:%M:%S',
- '%m/%d/%Y %H:%M',
- '%m/%d/%Y',
- '%m/%d/%y %H:%M:%S',
- '%m/%d/%y %H:%M',
- '%m/%d/%y'
+DATETIME_INPUT_FORMATS = [
+    '%Y-%m-%d %H:%M:%S',
+    '%Y-%m-%d %H:%M',
+    '%Y-%m-%d',
+    '%m/%d/%Y %H:%M:%S',
+    '%m/%d/%Y %H:%M',
+    '%m/%d/%Y',
+    '%m/%d/%y %H:%M:%S',
+    '%m/%d/%y %H:%M',
+    '%m/%d/%y'
+    '%m-%d-%y %H:%M:%S',
+    '%m-%d-%y %H:%M',
+    '%m-%d-%y',
+    '%m-%d-%Y %H:%M:%S',
+    '%m-%d-%Y %H:%M',
+    '%m-%d-%Y',
 
 ]
 DATE_INPUT_FORMATS = [
@@ -61,8 +63,6 @@ DATE_INPUT_FORMATS = [
     "%d %B, %Y",
 ]
 
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -80,7 +80,6 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'drf_spectacular',
 
-
 ]
 REST_FRAMEWORK = {
     # YOUR SETTINGS
@@ -90,20 +89,37 @@ REST_FRAMEWORK = {
     'SERVE_INCLUDE_SCHEMA': False,
     # OTHER SETTINGS
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-'DATE_INPUT_FORMATS':
-    ["%Y-%m-%d",
-    "%m/%d/%Y",
-    "%m/%d/%y",
-    "%m-%d-%Y",
-    "%m-%d-%y",
-    "%b %d %Y",
-    "%b %d, %Y",
-    "%d %b %Y",
-    "%d %b, %Y",
-    "%B %d %Y",
-    "%B %d, %Y",
-    "%d %B %Y",
-    "%d %B, %Y",]
+    'DATE_INPUT_FORMATS':
+        ["%Y-%m-%d",
+         "%m/%d/%Y",
+         "%m/%d/%y",
+         "%m-%d-%Y",
+         "%m-%d-%y",
+         "%b %d %Y",
+         "%b %d, %Y",
+         "%d %b %Y",
+         "%d %b, %Y",
+         "%B %d %Y",
+         "%B %d, %Y",
+         "%d %B %Y",
+         "%d %B, %Y", ],
+    'DATETIME_INPUT_FORMATS': [
+        '%Y-%m-%d %H:%M:%S',
+        '%Y-%m-%d %H:%M',
+        '%Y-%m-%d',
+        '%m/%d/%Y %H:%M:%S',
+        '%m/%d/%Y %H:%M',
+        '%m/%d/%Y',
+        '%m/%d/%y %H:%M:%S',
+        '%m/%d/%y %H:%M',
+        '%m/%d/%y'
+        '%m-%d-%y %H:%M:%S',
+        '%m-%d-%y %H:%M',
+        '%m-%d-%y',
+        '%m-%d-%Y %H:%M:%S',
+        '%m-%d-%Y %H:%M',
+        '%m-%d-%Y'
+    ]
 
 }
 MIDDLEWARE = [
@@ -147,7 +163,6 @@ AUTHENTICATION_BACKENDS = [
 ]
 WSGI_APPLICATION = 'app.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
@@ -157,7 +172,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -177,7 +191,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -188,7 +201,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = False
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/

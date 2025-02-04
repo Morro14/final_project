@@ -17,7 +17,7 @@ export default function TableFilter({ label, name, options, type, id, selectHand
                         onChange={selectHandle}
 
                     >
-                        <option className="filter-select-default">не применять фильтр</option>
+
                         {options.map((o) => (
 
                             <option key={"filter-opt" + o.id} value={o.id} id={o.id}>{o.name}</option>

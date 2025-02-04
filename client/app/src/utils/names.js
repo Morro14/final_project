@@ -1,11 +1,9 @@
 export const nameDict = {
   // labels
   engine_id: "Зав.№ двигателя",
-  engine_model: "Модель двигателя",
   id_num: "Заводской номер машины",
   main_bridge_id: "Зав.№ главного моста",
   main_bridge_model: "Модель главного моста",
-  model: "Модель",
   steerable_bridge_id: "Зав.№ двигателя",
   steerable_bridge_model: "Модель двигателя",
   transmission_id: "Зав.№ трансмиссии",
@@ -26,13 +24,23 @@ export const nameDict = {
   machine_downtime: "Время простоя техники",
   machine_name: "Модель техники",
   machine_id: "Заводской номер машины",
-  machine: "Модель техники",
+  machine: "Заводской номер машины",
   mt_date: "Дата проведения ТО",
   operating_time: "Наработка, м/час",
   order_date: "Дата заказ-наряда",
   order_num: "№ заказ-наряда",
   type: "Вид ТО",
-  mt_company: "Компания Т.О."
+  mt_company: "Компания Т.О.",
+
+  model: "Модель техники",
+  machine_model: "Модель техники",
+  engine_model: "Модель двигателя",
+  not_specified: "не указано",
+  maintenance_type: "Тип Т.О.",
+  name: "Название",
+  ref_type: "Категория",
+  description: "Описание",
+  edit: "ред."
 };
 
 export const filterFields = {
@@ -54,6 +62,10 @@ export const filterFields = {
     "failure_node",
     "recovery_method",
     "service_company",
+  ],
+  references: [
+    "ref_type",
+    "name"
   ]
 
 };
@@ -104,14 +116,6 @@ export const addFormFields = {
 export const textareaFields = ["cargo_receiver", "equipment_add", "failure_description"];
 
 export const choiceFields = {
-  machines:
-    [
-      "machine_model",
-      "engine_model",
-      "transmission_model",
-      "main_bridge_model",
-      "steerable_bridge_model",
-      "service_company"],
   machine:
     [
       "machine_model",
@@ -122,15 +126,20 @@ export const choiceFields = {
       "service_company",
       "service",
       "client"],
-  reclamations:
+
+  reclamation:
     [
       "service_company",
       "recovery_method",
-      "failure_node"],
-  maintenances:
+      "failure_node",
+      "machine"],
+
+  maintenance:
     [
       "maintenance_type",
-      "service_company"
+      "service_company",
+      "machine"
+
     ]
 
 
@@ -148,14 +157,15 @@ export const datetimeFields = [
   "recovery_date"
 ]
 
-export const categoryFieldToDetails = (field) => {
+export const categoryFieldToRef = (field) => {
+
   switch (field) {
     case "model":
       return "machine_model";
-    case "machine":
-      return "machine_model";
     case "type":
       return "maintenance_type";
+    case "mt_company":
+      return "service_company";
   }
   return field;
 };
@@ -171,6 +181,7 @@ export const linkNames = [
   "mt_company",
   "recovery_method",
   "failure_node",
+  "edit"
 ];
 
 

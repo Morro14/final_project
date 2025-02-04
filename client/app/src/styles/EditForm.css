@@ -1,4 +1,4 @@
-.add-form {
+.edit-form {
 	width: 100%;
 }
 
@@ -9,7 +9,7 @@
 	display: flex;
 	flex-direction: column;
 }
-.add-form-section {
+.edit-form-section {
 	display: flex;
 	flex-direction: column;
 	margin-top: 18px;
@@ -25,11 +25,6 @@
 
 .add-form-button {
 	margin-top: 18px;
-}
-
-.add-form-index-buttons {
-	display: flex;
-	flex-direction: row;
 }
 
 .input-inner {

@@ -1,16 +1,18 @@
 import { Link } from "react-router-dom";
 import { datetimeFields, dateFields, nameDict, linkNames } from "../../utils/names";
 import { formatHeaders, formatRowData, getLink } from "../../utils/formatting";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import '../../styles/Table.css'
 
 export default function TableSorted({ params }) {
   const tabActive = params.tab;
   const sortedData = params.list;
+  console.log('rendering table')
   const headerLabel = (name_prev) => {
     return nameDict[name_prev];
   };
 
+  // scroll fade
 
   const [scrollPosition, setScrollPosition] = useState('left')
   const handleScroll = (e) => {
@@ -29,7 +31,7 @@ export default function TableSorted({ params }) {
   }
 
 
-  const fadeClass = () => {
+  const getFadeClass = () => {
     switch (scrollPosition) {
       case 'left':
         return 'fade-right'
@@ -38,11 +40,12 @@ export default function TableSorted({ params }) {
     }
     return 'fade-sides'
   }
+  const fadeClass = getFadeClass()
   return !sortedData[0] ? (
     <div>Нет Данных</div>
   ) : (
     <>
-      <div className={`table-container ${fadeClass()}`} onScroll={handleScroll}>
+      <div className={`table-container ${fadeClass}`} onScroll={handleScroll} >
         <table className={`table-inner ${tabActive}-table table`}>
           <thead>
             <tr>

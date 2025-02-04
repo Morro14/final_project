@@ -1,10 +1,13 @@
 import { useFormContext } from "react-hook-form";
 
-export const Select = ({ label, type, id, options, name, className }) => {
+export const Select = ({ label, type, id, options, name, className, defaultData, category }) => {
     const { register } = useFormContext();
     let optionsChecked = true;
     if (!options) {
         optionsChecked = false
+    }
+    const setDefault = (opt) => {
+        return opt === defaultData
     }
     return (
         <div className={`input-container`}>
@@ -17,12 +20,13 @@ export const Select = ({ label, type, id, options, name, className }) => {
                         type={type}
                         className={`select-el`}
                         name={name}
-                        // { required: { value: true, message: 'required' } }
+                        defaultValue={defaultData}
                         {...register(name)}>
 
-                        {optionsChecked ? options.map((o) => (
-                            <option key={"add-form-opt" + o.id} value={o.name} id={o.id}>{o.name}</option>
-                        )) : <option value="not provided">нет данных</option>}
+                        {optionsChecked ? options.map((o) => {
+                            const selectedValue = setDefault(o)
+                            return <option key={"add-form-opt" + o.id} value={category !== 'reference' ? o.name : o.type} id={o.id}>{o.name}</option>
+                        }) : <option value="not provided">нет данных</option>}
                     </select>
                 </div>
             </div>

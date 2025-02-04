@@ -23,12 +23,15 @@ import {
 
 import TableNav, { sortedLoader } from "./components/Table/TableNav.js";
 import AddForm, { formLoader } from "./components/AddForm/AddForm.js";
-import AddFormReport from "./components/AddForm/AddFormReport.js";
 import AddFormIndex from "./components/AddForm/AddFormIndex.js";
 import MachineDetails, { machineLoader } from "./components/MachineDetails.js";
 import ErrorComp from "./components/Errors/ErrorComp.js";
 import { ErrorBoundary } from "./components/Errors/ErrorBoundary.js";
 import { AddFormSuccess } from "./components/AddForm/AddFormSuccess.js";
+import AddFormMain from "./components/AddForm/AddFormMain.js";
+import TableSorted from "./components/Table/TableSorted.js";
+import { EditForm } from "./components/AddForm/EditForm.js";
+import { refEditLoader } from "./components/AddForm/EditForm.js";
 
 export const serverURL = "http://127.0.0.1:8000/api";
 
@@ -70,27 +73,48 @@ const router = createBrowserRouter(
         <Route path="/auth" element={<Authorization />}></Route>
 
         <Route element={<PrivatRoute />}>
+
+
           <Route
-            path="/dashboard"
-            element={<Navigate to={"/dashboard/machines"} />}
-          ></Route>
-
-          <Route element={<Dashboard />}
+            element={<Dashboard />}
             loader={dashboardLoader}
+            path="/dashboard"
+            errorElement={<ErrorComp></ErrorComp>}
 
-            errorElement={<ErrorComp></ErrorComp>}>
+          >
             <Route
-              loader={formLoader}
-              path={"/dashboard/create/:category"}
-              element={<AddForm />}
+              loader={refEditLoader}
+              path={"/dashboard/edit/:category/:id"}
+              element={<EditForm />}
               errorElement={<ErrorComp></ErrorComp>}
-            ></Route>
+            >
+            </Route>
 
             <Route
               path={"/dashboard/create/"}
-              element={<AddFormIndex />}
+              element={<AddFormMain />}
               errorElement={<ErrorComp></ErrorComp>}
-            ></Route>
+            >
+              <Route
+                path={"/dashboard/create/"}
+                element={<AddFormIndex />}
+                errorElement={<ErrorComp></ErrorComp>}
+              ></Route>
+              <Route
+                loader={formLoader}
+                path={"/dashboard/create/:category"}
+                element={<AddForm />}
+                errorElement={<ErrorComp></ErrorComp>}
+              >
+              </Route>
+
+              <Route
+                path={"/dashboard/create/success"}
+                element={<AddFormSuccess />}
+                errorElement={<ErrorComp></ErrorComp>}
+              ></Route>
+            </Route>
+
             <Route
               loader={sortedLoader}
               errorElement={<ErrorComp></ErrorComp>}
@@ -98,8 +122,10 @@ const router = createBrowserRouter(
               path="/dashboard/:value"
             ></Route>
             <Route
-              element={<AddFormReport />}
-              path="/dashboard/create/report"
+              loader={sortedLoader}
+              errorElement={<ErrorComp></ErrorComp>}
+              element={<TableNav />}
+              path="/dashboard"
             ></Route>
           </Route>
         </Route>

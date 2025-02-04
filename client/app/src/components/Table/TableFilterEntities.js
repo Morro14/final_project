@@ -15,7 +15,7 @@ export default function TableFilterEntities({ label, name, options, type, id, se
                         className="filter-select-el table-select-el"
                         name={name}
                         onChange={selectHandle}
-
+                        defaultValue={options[0] ? options[0] : ''}
                     >
 
                         {options.map((o) => (

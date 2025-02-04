@@ -2,10 +2,11 @@ import { useFormContext } from "react-hook-form"
 import { isFormInvalid, findErrors, InputError } from "./InputError";
 
 
-export const TextArea = ({ label, type, id, placeholder, validation, name }) => {
+export const TextArea = ({ label, type, id, placeholder, validation, name, defaultData }) => {
     const { register, formState: { errors } } = useFormContext();
     const isInvalid = isFormInvalid(errors);
     const inputError = findErrors(errors, name)
+    console.log(defaultData)
     return (
         <div className="input-container">
             <div className="input-label-container">
@@ -17,7 +18,8 @@ export const TextArea = ({ label, type, id, placeholder, validation, name }) => 
                         type={type}
                         className="textarea-el"
                         placeholder={placeholder}
-                        {...register(name,)}>
+                        defaultValue={defaultData}
+                        {...register(name, validation)}>
                     </textarea>
                     {isInvalid && (Object.keys(inputError).length > 0) && (<InputError message={inputError.error} key={inputError.error}></InputError>)}
                 </div>

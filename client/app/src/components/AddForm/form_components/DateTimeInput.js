@@ -18,7 +18,7 @@ export const DateTimeInput = ({ label, type, id, placeholder, validation, name }
                         type={type}
                         className={`input-datetime-date ${type}`}
                         placeholder={placeholder}
-                        {...register(name,)}>
+                        {...register(name, validation)}>
                     </input>
 
                     {isInvalid && (Object.keys(inputError).length > 0) && (<InputError message={inputError.error} key={inputError.error}></InputError>)}

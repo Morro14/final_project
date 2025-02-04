@@ -9,12 +9,10 @@ export async function machineLoader({ params }) {
 
         .get(`${serverURL}/machines/${params.value}`)
         .then((r) => {
-            console.log(r);
             return r;
         })
         .catch((r) => {
             if (r.status !== 200) {
-                console.log(r)
                 throw new Response("Not Found", { status: 404, statusText: r.response.statusText })
             }
         });
