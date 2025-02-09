@@ -1,65 +1,69 @@
 .button {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	width: 100px;
-	height: 28px;
-	border-radius: 4px;
-	background-color: #ebe6d696;
-	color: rgb(51, 51, 51);
-	border: solid 1px rgb(155, 155, 155);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 28px;
+  border-radius: 4px;
+  background-color: #ebe6d696;
+  color: rgb(51, 51, 51);
+  border: solid 1px rgb(155, 155, 155);
+  text-wrap: nowrap;
+  font-family: "PT Astra Sans", serif;
 }
 .header-button {
-	width: fit-content;
-	font-size: 15px;
-	margin-left: 8px;
-	background-color: white;
-	color: #41638a;
-	border: none;
-	border-radius: 0px;
+  width: fit-content;
+  font-size: 18px;
+
+  /* color: white; */
+  color: #153e6c;
+  background-color: white;
+  border: none;
+  border-radius: 0px;
+  padding: 0 15px 0 15px;
 }
 
 .button:hover {
-	background-color: #dad5c696;
-	cursor: pointer;
+  background-color: #dad5c696;
+  cursor: pointer;
 }
 .header-button:hover {
-	background-color: white;
-	text-decoration: underline;
-	color: #527093;
+  background-color: white;
+  border-radius: 0px;
+  text-decoration: underline;
 }
 .profile-button {
-	width: fit-content;
-	padding-left: 10px;
+  width: fit-content;
 }
-.login-button {
-	margin-right: 8px;
-}
+
 .tab-button {
-	width: 100px;
-	height: 28px;
+  color: rgb(51, 51, 51);
+  width: fit-content;
+  background-color: white;
+  border: none;
 }
-.tab-button-add {
-	width: fit-content;
-	padding: 0 1rem 0 1rem;
+.tab-button:hover {
+  text-decoration: underline;
+  background-color: white;
 }
+
 .filter-button {
-	height: 22px;
+  height: 22px;
 }
 
 .add-form-index-button {
-	width: 150px;
-	margin-right: 15px;
-	color: rgb(51, 51, 51);
+  width: 150px;
+  margin-right: 15px;
+  color: rgb(51, 51, 51);
 }
 
 .add-form-index-button:visited {
-	color: rgb(51, 51, 51);
+  color: rgb(51, 51, 51);
 }
 .add-form-index-button:link {
-	color: rgb(51, 51, 51);
+  color: rgb(51, 51, 51);
 }
 
 .sort-form-button {
-	height: 21px;
+  height: 21px;
 }

@@ -51,7 +51,7 @@ class Reference(models.Model):
     def __str__(self):
         return self.name
 
-    name = models.TextField(max_length=120)
+    name = models.TextField(max_length=120, unique=True)
     ref_type = models.TextField(max_length=120, default="not specified", choices=types, verbose_name="Reference type")
     description = models.TextField(max_length=360)
 
@@ -119,7 +119,7 @@ class Reclamation(models.Model):
 
     def get_downtime(self):
         delta = self.recovery_date - self.refuse_date
-        print(delta, type(delta))
+
         return delta.days
 
     def get_machine_name(self):
@@ -128,22 +128,9 @@ class Reclamation(models.Model):
     def get_machine_id(self):
         return self.machine.id_num
 
-    @classmethod
-    def create(cls, service_company, machine, refuse_date, operating_time, failure_node, failure_description,
-               recovery_method, spare_parts_use, recovery_date):
-        rec = cls(
-            service_company=service_company,
-            machine=machine,
-            refuse_date=refuse_date,
-            operating_time=operating_time,
-            failure_node=failure_node,
-            failure_description=failure_description,
-            recovery_method=recovery_method,
-            spare_parts_use=spare_parts_use,
-            recovery_date=recovery_date
-        )
-        rec.machine_downtime = cls.get_downtime()
-        return rec
+    def save(self, *args, **kwargs):
+        self.machine_downtime = self.get_downtime()
+        super(Reclamation, self).save(*args, **kwargs)
 
     service_company = models.ForeignKey(to=Reference, on_delete=models.CASCADE, related_name='reclamation_ref',
                                         related_query_name='reclamations_ref', blank=True, default=None, null=True)
@@ -152,7 +139,7 @@ class Reclamation(models.Model):
                                 related_query_name='reclamation_machines')
 
     refuse_date = models.DateTimeField()
-    operating_time = models.TextField(max_length=120)
+    operating_time = models.PositiveIntegerField()
     failure_node = models.ForeignKey(to=Reference, on_delete=models.CASCADE, related_name='failure_node',
                                      related_query_name='failure_nodes')
     failure_description = models.TextField(max_length=220)
@@ -161,4 +148,4 @@ class Reclamation(models.Model):
     spare_parts_use = models.TextField(max_length=220)
 
     recovery_date = models.DateTimeField()
-    machine_downtime = models.DurationField(blank=True, null=True, editable=False)
+    machine_downtime = models.PositiveIntegerField(blank=True, null=True, editable=False)

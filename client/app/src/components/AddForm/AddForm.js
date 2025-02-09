@@ -1,8 +1,4 @@
-import {
-  useLoaderData,
-  useParams,
-  useNavigate
-} from "react-router-dom";
+import { useLoaderData, useParams, useNavigate } from "react-router-dom";
 import { nameDict, categoryFieldToRef } from "../../utils/names";
 import { Form } from "react-router-dom";
 import "../../styles/AddForm.css";
@@ -13,36 +9,44 @@ import { Input } from "./form_components/Input";
 import { DateTimeInput } from "./form_components/DateTimeInput";
 import { TextArea } from "./form_components/TextArea";
 import { Select } from "./form_components/Select";
-import { dateValidationObj, inputValidation, timeValidationObj } from "./form_components/Validations";
+import {
+  dateValidationObj,
+  inputValidation,
+  timeValidationObj,
+} from "./form_components/Validations";
 import { getChoices } from "../../utils/formChoices";
 import { useState } from "react";
 import { formatDateTime, formatSchema } from "../../utils/formatting";
 
-
-
 export async function formLoader({ params }) {
   const category = params.category;
-  const data = category !== 'reference' ? await axios
-    .get(serverURL + "/create/" + category)
-    .then((r) => {
-
-      return r;
-
-    })
-    .catch((r) => {
-      if (r.status !== 200) {
-        throw new Response("Not Found", { status: r.status, statusText: r.response.statusText })
-      }
-    }) : '';
+  const data =
+    category !== "reference"
+      ? await axios
+          .get(serverURL + "/create/" + category)
+          .then((r) => {
+            return r;
+          })
+          .catch((r) => {
+            if (r.status !== 200) {
+              throw new Response("Not Found", {
+                status: r.status,
+                statusText: r.response.statusText,
+              });
+            }
+          })
+      : "";
   const schemaData = await axios
-    .options(serverURL + '/' + category + 's')
+    .options(serverURL + "/" + category + "s")
     .then((r) => {
-
-      return r
+      return r;
     })
     .catch((r) => {
       if (r.status !== 200) {
-        throw new Response("Not Found", { status: r.status, statusText: r.response.statusText })
+        throw new Response("Not Found", {
+          status: r.status,
+          statusText: r.response.statusText,
+        });
       }
     });
   return [data, schemaData];
@@ -50,63 +54,62 @@ export async function formLoader({ params }) {
 
 export default function AddForm() {
   const methods = useForm();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const category = useParams("category").category;
-  const [addSuccess, setAddSuccess] = useState('')
+  const [addSuccess, setAddSuccess] = useState("");
   const [data, schemaData] = useLoaderData();
-  const userRef = category !== 'reference' ? data.data.user_ref.ref_type : 'Manager'
-  const formattedSchemaData = formatSchema(schemaData.data.actions.POST, userRef)
+  const userRef =
+    category !== "reference" ? data.data.user_ref.ref_type : "Manager";
+  const formattedSchemaData = formatSchema(
+    schemaData.data.actions.POST,
+    userRef
+  );
 
-  let options = getChoices(category, data.data, formattedSchemaData)
+  let options = getChoices(category, data.data, formattedSchemaData);
 
-  let formFields = Object.keys(formattedSchemaData)
+  let formFields = Object.keys(formattedSchemaData);
 
+  const onSubmit = methods.handleSubmit((formData) => {
+    const formattedData = formatDateTime(formData);
 
-
-
-  const onSubmit = methods.handleSubmit(formData => {
-
-    const formattedData = formatDateTime(formData)
-
-    localStorage.setItem('formData', JSON.stringify({ data: formData, category: category }))
+    localStorage.setItem(
+      "formData",
+      JSON.stringify({ data: formData, category: category })
+    );
 
     switch (userRef) {
-      case 'client':
-        formattedData.client = data.data.user_ref.name
-        break
-      case 'service_company' || 'service':
-        formattedData.service_company = data.data.user_ref.name
-        break
+      case "client":
+        formattedData.client = data.data.user_ref.name;
+        break;
+      case "service_company" || "service":
+        formattedData.service_company = data.data.user_ref.name;
+        break;
     }
-
-
     axios
-      .post(serverURL + '/create/' + category, formattedData)
-      .then(r => {
-
+      .post(serverURL + "/create/" + category, formattedData)
+      .then((r) => {
         if (r.status === 200) {
-          setAddSuccess('200')
-          navigate('/dashboard/create/success')
+          setAddSuccess("200");
+          navigate("/dashboard/create/success");
         }
-      }
-      )
+      })
       .catch((r) => {
-        window.scrollTo(0, 0)
-        setAddSuccess('406')
-      }
-      )
-  })
-
+        window.scrollTo(0, 0);
+        setAddSuccess("406");
+      });
+  });
 
   const titleCategoty = {
     reclamation: "рекламации",
     maintenance: "техническом обслуживании",
-    machine: "технике"
-  }
+    machine: "технике",
+  };
   const getField = (field) => {
-
     const refField = categoryFieldToRef(field);
-    if (formattedSchemaData[field].type === 'string' && formattedSchemaData[field].max_length > 120) {
+    if (
+      formattedSchemaData[field].type === "string" &&
+      formattedSchemaData[field].max_length > 120
+    ) {
       return (
         <TextArea
           label={nameDict[field]}
@@ -116,14 +119,16 @@ export default function AddForm() {
           maxLength={220}
           validation={inputValidation}
           name={field}
-
         ></TextArea>
       );
-    } else if (formattedSchemaData[field]['type'] === 'nested object' || formattedSchemaData[field]['type'] === 'field' ||
-      formattedSchemaData[field]['type'] === 'choice'
+    } else if (
+      formattedSchemaData[field]["type"] === "nested object" ||
+      formattedSchemaData[field]["type"] === "field" ||
+      formattedSchemaData[field]["type"] === "choice"
     ) {
-
-      let optionsF = options[field] ? options[field] : options[refField] || options['machines']
+      let optionsF = options[field]
+        ? options[field]
+        : options[refField] || options["machines"];
       return (
         <Select
           label={nameDict[field]}
@@ -131,10 +136,9 @@ export default function AddForm() {
           id={field}
           options={optionsF}
           name={field}
-        >
-        </Select>
+        ></Select>
       );
-    } else if (formattedSchemaData[field]['type'] === 'date') {
+    } else if (formattedSchemaData[field]["type"] === "date") {
       return (
         <Input
           label={nameDict[field]}
@@ -144,12 +148,12 @@ export default function AddForm() {
           placeholder="YYYY-mm-dd"
           key={"inpt" + field}
           validation={dateValidationObj}
-
         ></Input>
       );
-    } else if (formattedSchemaData[field]['type'] === 'datetime') {
+    } else if (formattedSchemaData[field]["type"] === "datetime") {
       return (
-        <div className="datetime-el">{nameDict[field]}
+        <div className="datetime-el">
+          {nameDict[field]}
           <div className="datetime-container">
             <DateTimeInput
               label={"Дата"}
@@ -159,7 +163,6 @@ export default function AddForm() {
               placeholder="YYYY-mm-dd"
               key={"inpt" + field + "_date"}
               validation={dateValidationObj}
-
             ></DateTimeInput>
             <DateTimeInput
               label={"Время"}
@@ -169,14 +172,11 @@ export default function AddForm() {
               placeholder="hh:mm"
               key={"inpt" + field + "_time"}
               validation={timeValidationObj}
-
             ></DateTimeInput>
           </div>
         </div>
       );
-    }
-
-    else {
+    } else {
       return (
         <Input
           label={nameDict[field]}
@@ -190,22 +190,22 @@ export default function AddForm() {
       );
     }
   };
-  const errorMsg = addSuccess !== '' ? 'Не удалось добавить данные' : ''
+  const errorMsg = addSuccess !== "" ? "Не удалось добавить данные" : "";
 
-  console.log('formFields', formFields)
   return (
     <div className="add-form-container">
-      <h2 className="add-form-title">Добавить данные о {titleCategoty[category]}</h2>
+      <h2 className="add-form-title">
+        Добавить данные о {titleCategoty[category]}
+      </h2>
       <h4 className="add-form-error-msg">{errorMsg}</h4>
       <FormProvider {...methods}>
         <Form
-          onSubmit={e => e.preventDefault()}
+          onSubmit={(e) => e.preventDefault()}
           className="add-form"
           noValidate
         >
           {formFields.map((f) => (
             <div className="add-form-section" key={"add-form-section-" + f}>
-
               {getField(f)}
             </div>
           ))}

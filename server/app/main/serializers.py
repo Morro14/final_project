@@ -30,6 +30,13 @@ class ReferenceSerializer(serializers.ModelSerializer):
         ref.save()
         return ref
 
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name)
+        instance.description = validated_data.get('description', instance.description)
+        instance.ref_type = validated_data.get('ref_type', instance.ref_type)
+        instance.save()
+        return instance
+
     class Meta:
         model = Reference
 
@@ -37,34 +44,13 @@ class ReferenceSerializer(serializers.ModelSerializer):
 
 
 class MachineSerializer(serializers.ModelSerializer):
-    client = serializers.SlugRelatedField(
-        slug_field='name',
-        queryset=Reference.objects.all()
-    )
-    model = serializers.SlugRelatedField(
-        slug_field='name',
-        queryset=Reference.objects.all()
-    )
-    engine_model = serializers.SlugRelatedField(
-        slug_field='name',
-        queryset=Reference.objects.all()
-    )
-    transmission_model = serializers.SlugRelatedField(
-        slug_field='name',
-        queryset=Reference.objects.all()
-    )
-    main_bridge_model = serializers.SlugRelatedField(
-        slug_field='name',
-        queryset=Reference.objects.all()
-    )
-    steerable_bridge_model = serializers.SlugRelatedField(
-        slug_field='name',
-        queryset=Reference.objects.all()
-    )
-    service_company = serializers.SlugRelatedField(
-        slug_field='name',
-        queryset=Reference.objects.all()
-    )
+    client = ReferenceSerializer()
+    model = ReferenceSerializer()
+    engine_model = ReferenceSerializer()
+    transmission_model = ReferenceSerializer()
+    main_bridge_model = ReferenceSerializer()
+    steerable_bridge_model = ReferenceSerializer()
+    service_company = ReferenceSerializer()
     id_num = serializers.CharField(validators=[UniqueValidator(queryset=Machine.objects.all())])
 
     # sorting_fields = serializers.SerializerMethodField()
@@ -106,27 +92,11 @@ class MachineSerializer(serializers.ModelSerializer):
 
 
 class MachineRestrictedSerializer(serializers.ModelSerializer):
-    model = serializers.SlugRelatedField(
-        slug_field='name',
-        queryset=Reference.objects.all()
-    )
-    engine_model = serializers.SlugRelatedField(
-        slug_field='name',
-        queryset=Reference.objects.all()
-    )
-    transmission_model = serializers.SlugRelatedField(
-        slug_field='name',
-        queryset=Reference.objects.all()
-    )
-    main_bridge_model = serializers.SlugRelatedField(
-        slug_field='name',
-        queryset=Reference.objects.all()
-    )
-    steerable_bridge_model = serializers.SlugRelatedField(
-        slug_field='name',
-        queryset=Reference.objects.all()
-    )
-
+    model = ReferenceSerializer()
+    engine_model = ReferenceSerializer()
+    transmission_model = ReferenceSerializer()
+    main_bridge_model = ReferenceSerializer()
+    steerable_bridge_model = ReferenceSerializer()
     id_num = serializers.CharField(validators=[UniqueValidator(queryset=Machine.objects.all())])
 
     class Meta:
@@ -146,11 +116,11 @@ class MachineRestrictedSerializer(serializers.ModelSerializer):
 
 
 class ReclamationSerializer(serializers.ModelSerializer):
-    failure_node = serializers.SlugRelatedField(slug_field="name", queryset=Reference.objects.all())
-    recovery_method = serializers.SlugRelatedField(slug_field="name", queryset=Reference.objects.all())
-    service_company = serializers.SlugRelatedField(slug_field="name", queryset=Reference.objects.all())
-    machine = serializers.SlugRelatedField(slug_field="id_num", queryset=Machine.objects.all())
-    machine_downtime = serializers.CharField(source="get_downtime", read_only=True)
+    failure_node = ReferenceSerializer()
+    recovery_method = ReferenceSerializer()
+    service_company = ReferenceSerializer()
+    machine = MachineSerializer()
+    # machine_downtime = serializers.CharField(source="get_downtime", read_only=True)
     refuse_date = serializers.DateTimeField()
     recovery_date = serializers.DateTimeField()
 
@@ -178,11 +148,11 @@ class ReclamationSerializer(serializers.ModelSerializer):
 
 
 class MaintenanceSerializer(serializers.ModelSerializer):
-    type = serializers.SlugRelatedField(slug_field="name", queryset=Reference.objects.all())
+    type = ReferenceSerializer()
 
-    machine = serializers.SlugRelatedField(slug_field="id_num", queryset=Machine.objects.all())
-    service_company = serializers.SlugRelatedField(slug_field="name", queryset=Reference.objects.all())
-    mt_company = serializers.SlugRelatedField(slug_field="name", queryset=Reference.objects.all())
+    machine = MachineSerializer()
+    service_company = ReferenceSerializer()
+    mt_company = ReferenceSerializer()
 
     class Meta:
         model = Maintenance
@@ -223,3 +193,17 @@ class MyUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = MyUser
         fields = ['email', 'user_type', 'user_ref']
+
+
+class AuthenticatedSerializer(serializers.Serializer):
+    client = serializers.CharField()
+    machines = MachineSerializer(many=True)
+    reclamations = ReclamationSerializer(many=True)
+    maintenances = MaintenanceSerializer(many=True)
+    references = ReferenceSerializer(many=True)
+
+
+class FormOptionFieldsSerializer(serializers.Serializer):
+    user_ref = ReferenceSerializer()
+    ref = ReferenceSerializer(many=True)
+    machines = MachineSerializer(many=True)

@@ -13,11 +13,13 @@ export async function detailsLoader({ params }) {
     .get(`${serverURL}/machines/${params.id}`)
     .then((r) => {
       data = r;
-
     })
     .catch((e) => {
       if (e.status !== 401) {
-        throw new Response("Not Found", { status: 404, statusText: e.response.statusText })
+        throw new Response("Not Found", {
+          status: 404,
+          statusText: e.response.statusText,
+        });
       }
     });
 
@@ -30,7 +32,10 @@ export async function detailsLoader({ params }) {
       })
       .catch((e) => {
         if (e.status !== 200) {
-          throw new Response("Not Found", { status: 404, statusText: e.response.statusText })
+          throw new Response("Not Found", {
+            status: 404,
+            statusText: e.response.statusText,
+          });
         }
       });
   }
@@ -39,15 +44,13 @@ export async function detailsLoader({ params }) {
 }
 
 export default function SearchResults() {
-
   const fieldLabel = (name_prev) => {
     return nameDict[name_prev];
   };
 
   const response = useLoaderData();
 
-
-  const formattedData = formatRowData(response.data)
+  const formattedData = formatRowData(response.data);
   return (
     <>
       <h2>Результаты поиска:</h2>

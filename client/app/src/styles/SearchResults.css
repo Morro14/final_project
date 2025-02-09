@@ -34,19 +34,6 @@ td {
   /* text-overflow: ellipsis; */
 }
 
-a:link {
-  color: #526f91;
-  text-decoration: none;
-}
-a:visited {
-  color: #658bb5;
-}
-
-.results-table-container {
-  /* overflow-x: scroll;
-  overflow-y: hidden; */
-}
-
 td {
   position: relative;
 }

@@ -32,6 +32,7 @@ import AddFormMain from "./components/AddForm/AddFormMain.js";
 import TableSorted from "./components/Table/TableSorted.js";
 import { EditForm } from "./components/AddForm/EditForm.js";
 import { refEditLoader } from "./components/AddForm/EditForm.js";
+import SearchErrorComp from "./components/Errors/SearchError.js";
 
 export const serverURL = "http://127.0.0.1:8000/api";
 
@@ -55,7 +56,7 @@ const router = createBrowserRouter(
             path="/search/:id"
             element={<SearchResults />}
             loader={detailsLoader}
-            errorElement={<ErrorComp></ErrorComp>}
+            errorElement={<SearchErrorComp></SearchErrorComp>}
           ></Route>
         </Route>
         <Route
@@ -73,22 +74,18 @@ const router = createBrowserRouter(
         <Route path="/auth" element={<Authorization />}></Route>
 
         <Route element={<PrivatRoute />}>
-
-
           <Route
             element={<Dashboard />}
             loader={dashboardLoader}
             path="/dashboard"
             errorElement={<ErrorComp></ErrorComp>}
-
           >
             <Route
               loader={refEditLoader}
               path={"/dashboard/edit/:category/:id"}
               element={<EditForm />}
               errorElement={<ErrorComp></ErrorComp>}
-            >
-            </Route>
+            ></Route>
 
             <Route
               path={"/dashboard/create/"}
@@ -105,8 +102,7 @@ const router = createBrowserRouter(
                 path={"/dashboard/create/:category"}
                 element={<AddForm />}
                 errorElement={<ErrorComp></ErrorComp>}
-              >
-              </Route>
+              ></Route>
 
               <Route
                 path={"/dashboard/create/success"}

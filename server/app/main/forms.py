@@ -10,14 +10,14 @@ datetime_formats = settings.DATETIME_INPUT_FORMATS
 
 datetime_formats_str = 'Formats: '
 for f in datetime_formats:
-    f_datetime = datetime.datetime.strftime(datetime.datetime.now(), f)
-    datetime_formats_str += (f_datetime + ' | ')
+
+    datetime_formats_str += (f + ' | ')
 
 date_formats = settings.DATE_INPUT_FORMATS
 date_formats_str = 'Formats: '
 for f in date_formats:
-    f_date = datetime.datetime.strftime(datetime.datetime.now(), f)
-    date_formats_str += (f_date + ' | ')
+
+    date_formats_str += (f + ' | ')
 
 
 class MyUserCreationForm(UserCreationForm):

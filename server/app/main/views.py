@@ -5,7 +5,7 @@ from django.contrib.auth.models import Group
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.utils import extend_schema, OpenApiParameter, inline_serializer
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
@@ -16,7 +16,8 @@ from rest_framework.views import APIView
 
 from .models import Machine, Reference, Reclamation, Maintenance, MyUser
 from .serializers import MachineSerializer, MachineRestrictedSerializer, ReferenceSerializer, ReclamationSerializer, \
-    MaintenanceSerializer, MyUserSerializer, GroupSerializer
+    MaintenanceSerializer, MyUserSerializer, GroupSerializer, AuthenticatedSerializer, FormOptionFieldsSerializer
+from rest_framework import fields
 
 
 @extend_schema(tags=["Machines"])
@@ -39,16 +40,13 @@ class MachineRestrictedView(RetrieveAPIView):
 class ReferenceViewSet(viewsets.ModelViewSet):
     authentication_classes = []
     queryset = Reference.objects.all()
-    lookup_field = "name"
+    lookup_field = "pk"
+    lookup_value_regex = r'[\w.]+'
     serializer_class = ReferenceSerializer
-
-    def get_object(self):
-        name = unquote(self.kwargs["name"])
-        return self.get_queryset().get(name=name)
 
 
 ref_view = ReferenceViewSet.as_view({'get': 'retrieve'})
-ref_view_list = ReferenceViewSet.as_view({'get': 'list'})
+ref_list_view = ReferenceViewSet.as_view({'get': 'list'})
 
 
 @extend_schema(tags=["maintenances"])
@@ -74,18 +72,28 @@ reclamation_view_list = ReclamationViewSet.as_view({'get': 'list'})
 
 
 @extend_schema(
-    parameters=[
-        OpenApiParameter('email', OpenApiTypes.EMAIL, required=True, description='Users email'),
-        OpenApiParameter('password', OpenApiTypes.PASSWORD, required=True, description='Users password'),
-
-    ]
+    description='authentication',
+    request=inline_serializer(name='request_for_authentication', fields={
+        'password': fields.CharField(),
+        'email': fields.EmailField(),
+    }),
+    responses=inline_serializer(name='response_for_authentication', fields={
+        'status': fields.IntegerField(), 'data': inline_serializer(
+            name='user_credentials',
+            fields={
+                'email': fields.EmailField(),
+                'password': fields.CharField(),
+            }
+        )
+    })
 )
 class AuthView(APIView):
     def post(self, request):
+        print(request.data)
         user = authenticate(email=request.data["email"], password=request.data["password"])
         if user is not None:
             token, created = Token.objects.get_or_create(user=user)
-            return Response({"email": user.email, 'token': token.key})
+            return Response(status=200, data={"email": user.email, 'token': token.key})
         else:
             return Response(status=401)
 
@@ -106,6 +114,7 @@ class ReclamationSetView(viewsets.ReadOnlyModelViewSet):
     serializer_class = ReclamationSerializer
 
 
+@extend_schema(responses={200: MyUserSerializer})
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 def get_user(request):
@@ -122,6 +131,7 @@ def get_user(request):
 class AuthenticatedView(APIView):
     authentication_classes = [TokenAuthentication]
 
+    @extend_schema(responses={200: AuthenticatedSerializer}, description='Data for authenticated users')
     def get(self, request, category=None):
         sorting = request.GET.get('sorting')
         try:
@@ -130,15 +140,23 @@ class AuthenticatedView(APIView):
             raise Http404("Access error")
 
         if user.groups.filter(name="Manager"):
+
             machine_list = Machine.objects.all()
-            machine_list = machine_list.order_by(sorting) if sorting and category == 'machines' else machine_list
+            if sorting and category == 'machines':
+                machine_list = machine_list.order_by(sorting)
+
             reclamations_list = Reclamation.objects.all()
-            reclamations_list = reclamations_list.order_by(
-                sorting) if sorting and category == 'reclamations' else reclamations_list
+            if sorting and category == 'reclamations':
+                reclamations_list = reclamations_list.order_by(sorting)
+
             mt_list = Maintenance.objects.all()
-            mt_list = mt_list.order_by(sorting) if sorting and category == 'maintenances' else mt_list
+            if sorting and category == 'maintenances':
+                mt_list = mt_list.order_by(sorting)
+
             ref_list = Reference.objects.all()
-            ref_list = ref_list.order_by(sorting) if sorting and category == 'reference' else ref_list
+            if sorting and category == 'references':
+                ref_list = ref_list.order_by(sorting)
+
             context = {
                 'client': {'name': f'Manager {user.email}'},
                 'machines': MachineSerializer(machine_list, many=True).data,
@@ -150,16 +168,24 @@ class AuthenticatedView(APIView):
 
         if user.is_authenticated:
             client = user.user_ref
+
             machine_list = Machine.objects.filter(client=client)
-            machine_list = machine_list.order_by(sorting) if sorting and category == 'machines' else machine_list
+            if sorting and category == 'machines':
+                machine_list = machine_list.order_by(sorting)
+
             machine_ids = []
             for m in machine_list:
                 machine_ids.append(m.id_num)
+
             reclamations_list = Reclamation.objects.filter(machine_id__id_num__in=machine_ids)
-            reclamations_list = reclamations_list.order_by(
-                sorting) if sorting and category == 'reclamations' else reclamations_list
+            if sorting and category == 'reclamations':
+                reclamations_list = reclamations_list.order_by(sorting)
+
             mt_list = Maintenance.objects.filter(machine__id_num__in=machine_ids)
-            mt_list = mt_list.order_by(sorting) if sorting and category == 'maintenances' else mt_list
+
+            if sorting and category == 'maintenances':
+                mt_list = mt_list.order_by(sorting)
+
             context = {'client': ReferenceSerializer(client).data,
                        'machines': MachineSerializer(machine_list, many=True).data,
                        'reclamations': ReclamationSerializer(reclamations_list, many=True).data,
@@ -170,6 +196,10 @@ class AuthenticatedView(APIView):
 class CreateView(APIView):
     authentication_classes = [TokenAuthentication]
 
+    @extend_schema(
+        description='get data for form option fields depending on the permissions',
+        responses={200: FormOptionFieldsSerializer()},
+    )
     def get(self, request, category=None):
         user = request.user
         user_manager = user.groups.filter(name='Manager').exists()
@@ -230,6 +260,22 @@ class CreateView(APIView):
         else:
             return Response(status=400, data={'text': 'Bad request'})
 
+    @extend_schema(
+        description="receives data for adding a machine, reclamation, maintenance or reference depending "
+                    "on the request parameter and user's permissions",
+        request={
+            'machine': MachineSerializer(),
+            'reclamation': ReclamationSerializer(),
+            'maintenance': MaintenanceSerializer(),
+            'reference': ReferenceSerializer()
+        },
+        responses=inline_serializer(name='create_response', fields={'status': fields.IntegerField(default=200),
+                                                                    'data': inline_serializer(
+                                                                        name='status_text',
+                                                                        fields={'text': fields.CharField()}
+                                                                    )})
+
+    )
     def post(self, request, category):
         user = request.user
         user_manager = user.groups.filter(name='Manager').exists()
@@ -280,17 +326,21 @@ class CreateView(APIView):
 
     def patch(self, request, *args, **kwargs):
         data = request.data
-        name_prev = data.pop('name_prev')
+
         user = request.user
+        id_ = int(data['id'])
+        data['pk'] = id_
+        data.pop('id')
         user_manager = user.groups.filter(name='Manager').exists()
-        ref = Reference.objects.get(name=name_prev)
+        ref = Reference.objects.get(pk=id_)
 
         if user_manager and ref:
-            data['pk'] = ref.pk
-            serializer = ReferenceSerializer(data=data)
+            print(data)
+            serializer = ReferenceSerializer(ref, data=data)
             serializer.is_valid()
+            print(serializer.errors)
             if serializer.is_valid():
-                serializer.save()
+                serializer.update(instance=ref, validated_data=data)
                 return Response(status=200, data={'text': 'Data has been added'})
             else:
                 return Response(status=406, data={'text': 'invalid data'})

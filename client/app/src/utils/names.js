@@ -40,7 +40,7 @@ export const nameDict = {
   name: "Название",
   ref_type: "Категория",
   description: "Описание",
-  edit: "ред."
+  edit: "ред.",
 };
 
 export const filterFields = {
@@ -52,27 +52,13 @@ export const filterFields = {
     "main_bridge_model",
     "steerable_bridge_model",
   ],
-  maintenances: [
-    "mt_company",
-    "service_company",
-    "type",
-    "machine_id",
-  ],
-  reclamations: [
-    "failure_node",
-    "recovery_method",
-    "service_company",
-  ],
-  references: [
-    "ref_type",
-    "name"
-  ]
-
+  maintenances: ["mt_company", "service_company", "type", "machine_id"],
+  reclamations: ["failure_node", "recovery_method", "service_company"],
+  references: ["ref_type", "name"],
 };
 
 export const addFormFields = {
-  // form fields 
-  // #TODO получать поля для формы через API
+  // form fields
   machine: [
     "service_company",
     "id_num",
@@ -112,53 +98,39 @@ export const addFormFields = {
   ],
 };
 
-
-export const textareaFields = ["cargo_receiver", "equipment_add", "failure_description"];
+export const textareaFields = [
+  "cargo_receiver",
+  "equipment_add",
+  "failure_description",
+];
 
 export const choiceFields = {
-  machine:
-    [
-      "machine_model",
-      "engine_model",
-      "transmission_model",
-      "main_bridge_model",
-      "steerable_bridge_model",
-      "service_company",
-      "service",
-      "client"],
+  machine: [
+    "machine_model",
+    "engine_model",
+    "transmission_model",
+    "main_bridge_model",
+    "steerable_bridge_model",
+    "service_company",
+    "service",
+    "client",
+  ],
 
-  reclamation:
-    [
-      "service_company",
-      "recovery_method",
-      "failure_node",
-      "machine"],
+  reclamation: [
+    "service_company",
+    "recovery_method",
+    "failure_node",
+    "machine",
+  ],
 
-  maintenance:
-    [
-      "maintenance_type",
-      "service_company",
-      "machine"
+  maintenance: ["maintenance_type", "service_company", "machine"],
+};
 
-    ]
+export const dateFields = ["mt_date", "order_date"];
 
-
-}
-
-
-export const dateFields = [
-  "mt_date",
-  "order_date",
-
-]
-
-export const datetimeFields = [
-  "refuse_date",
-  "recovery_date"
-]
+export const datetimeFields = ["refuse_date", "recovery_date"];
 
 export const categoryFieldToRef = (field) => {
-
   switch (field) {
     case "model":
       return "machine_model";
@@ -181,7 +153,5 @@ export const linkNames = [
   "mt_company",
   "recovery_method",
   "failure_node",
-  "edit"
+  "edit",
 ];
-
-

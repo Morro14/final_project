@@ -1,57 +1,55 @@
-import { Link } from "react-router-dom";
-import { datetimeFields, dateFields, nameDict, linkNames } from "../../utils/names";
+import { nameDict } from "../../utils/names";
 import { formatHeaders, formatRowData, getLink } from "../../utils/formatting";
-import { useEffect, useState } from "react";
-import '../../styles/Table.css'
+import { useState } from "react";
+import "../../styles/Table.css";
 
 export default function TableSorted({ params }) {
   const tabActive = params.tab;
   const sortedData = params.list;
-  console.log('rendering table')
   const headerLabel = (name_prev) => {
     return nameDict[name_prev];
   };
 
   // scroll fade
 
-  const [scrollPosition, setScrollPosition] = useState('left')
+  const [scrollPosition, setScrollPosition] = useState("left");
   const handleScroll = (e) => {
-
     const { scrollLeft, scrollLeftMax } = e.target;
     // console.log(e.target)
 
     if (scrollLeft === 0) {
-      setScrollPosition('left')
+      setScrollPosition("left");
     } else if (scrollLeft === scrollLeftMax) {
-      setScrollPosition('right')
+      setScrollPosition("right");
     } else {
-      setScrollPosition('middle')
+      setScrollPosition("middle");
     }
-
-  }
-
+  };
 
   const getFadeClass = () => {
     switch (scrollPosition) {
-      case 'left':
-        return 'fade-right'
-      case 'right':
-        return 'fade-left'
+      case "left":
+        return "fade-right";
+      case "right":
+        return "fade-left";
     }
-    return 'fade-sides'
-  }
-  const fadeClass = getFadeClass()
+    return "fade-sides";
+  };
+  const fadeClass = getFadeClass();
+  console.log("sortedData", sortedData);
   return !sortedData[0] ? (
     <div>Нет Данных</div>
   ) : (
     <>
-      <div className={`table-container ${fadeClass}`} onScroll={handleScroll} >
+      <div className={`table-container ${fadeClass}`} onScroll={handleScroll}>
         <table className={`table-inner ${tabActive}-table table`}>
           <thead>
             <tr>
-              {Object.entries(formatHeaders(sortedData[0])).map(([key, value]) => (
-                <th key={`${tabActive}_th_` + key}>{headerLabel(key)}</th>
-              ))}
+              {Object.entries(formatHeaders(sortedData[0])).map(
+                ([key, value]) => (
+                  <th key={`${tabActive}_th_` + key}>{headerLabel(key)}</th>
+                )
+              )}
             </tr>
           </thead>
           <tbody>

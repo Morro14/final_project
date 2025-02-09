@@ -25,32 +25,28 @@ from rest_framework.routers import SimpleRouter
 
 router = SimpleRouter()
 
-router.register(r'api/machines', MachineViewSet, basename='machine')
-router.register(r'api/references', ReferenceViewSet, basename='reference', )
-router.register(r'api/maintenances', MaintenanceViewSet, basename='maintenance')
-router.register(r'api/reclamations', ReclamationViewSet, basename='reclamation')
+router.register(r'machines', MachineViewSet, basename='machine', )
+router.register(r'references', ReferenceViewSet, basename='reference', )
+router.register(r'maintenances', MaintenanceViewSet, basename='maintenance')
+router.register(r'reclamations', ReclamationViewSet, basename='reclamation')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('allauth.urls')),
-    path('main/', include('main.urls')),
     path('api/', include(router.urls)),
     path('api/machines/restricted/<str:id_num>', MachineRestrictedView.as_view()),
-    # path('api/ref/<path:name>', ref_view),
-    # path('api/ref/', ref_view_list),
     path('api/edit/reference/<path:name>', CreateView.as_view()),
     path('api/create/<str:category>', CreateView.as_view()),
+    # path('api/references/<path:name>', ref_view),
+    # path('api/references/', ref_list_view),
     path('api/dashboard/', get_user),
     path('api/dashboard/<str:category>', AuthenticatedView.as_view()),
     path('api/dashboard/<str:category>?sorting=<str:sorting>', AuthenticatedView.as_view()),
-    # path('api/dashboard/<str:category>?sorting=<str:sorting>&filter=<str:filter_>', SortedView.as_view()),
     path('api/auth', AuthView.as_view()),
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    # Optional UI:
     path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]
-urlpatterns += router.urls
+
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

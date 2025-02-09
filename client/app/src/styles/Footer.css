@@ -1,4 +1,41 @@
 .footer {
-  height: 57px;
+  font-family: "PT Astra Sans", serif;
   background-color: #153e6c;
+  border-top: solid 1px #153e6c;
+  display: flex;
+  justify-content: center;
+}
+.footer-block > h4 {
+  /* color: #153e6c; */
+  color: #ebe6d696;
+}
+
+.footer-block {
+  display: flex;
+  flex-direction: row;
+  margin: 0 20px 0 20px;
+  color: #e4e1d7;
+  font-size: 14px;
+  min-width: 120px;
+  max-width: 250px;
+  margin-bottom: 20px;
+}
+.footer-block-inner {
+  display: flex;
+  flex-direction: column;
+}
+.footer-block-inner > div {
+  text-wrap: balance;
+}
+.footer-arrow {
+  font-weight: bold;
+  font-size: 16px;
+  position: relative;
+  bottom: -17px;
+  right: 6px;
+  color: #d20a11;
+}
+
+.footer-inner {
+  display: flex;
 }
