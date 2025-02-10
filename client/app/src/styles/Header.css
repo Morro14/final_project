@@ -3,8 +3,6 @@
   display: flex;
 
   justify-content: center;
-  font-family: "PT Astra Sans", serif;
-  font-weight: normal;
 }
 .header-container-middle {
   padding: 0;
@@ -37,9 +35,9 @@
 }
 
 .title-line-1 {
-  font-weight: bolder;
   font-size: 22px;
 
+  font-weight: bold;
   text-wrap: nowrap;
 }
 

@@ -18,6 +18,7 @@ import TableFilterEntities from "./TableFilterEntities";
 
 import { useTableCon } from "./TableContext";
 import "../../styles/TableNav.css";
+import { useState } from "react";
 
 export async function sortedLoader({ params, request }) {
   const category = params.value;
@@ -97,27 +98,36 @@ export default function TableNav() {
   const filterNames = filterFields[category];
   const filterOptions = filterNames.map((n) => ({ name: nameDict[n], id: n }));
   // get filter entities
-  let filterEntities = [];
+  const [filterEnt, setFilterEnt] = useState([]);
+
   // disable tag for entity filter
-  let disableTag = "true";
+  const [disableTag, setDisableTag] = useState("true");
   //
-  const emptyOption = ["нет фильтра"];
-  console.log("undortedData", unsortedData);
-  if (filterCategory !== "") {
-    disableTag = "false";
-    filterEntities = [].concat(
+  const emptyOption = [{ label: "нет фильтра" }];
+  const getFilterEntOptions = (filterCat) => {
+    setDisableTag("false");
+
+    let filterEnts = [].concat(
       emptyOption,
       unsortedData.map((e) => {
         const formattedEl = formatRowData(e);
-        return formattedEl[filterCategory];
+        return formattedEl[filterCat];
       })
     );
-    console.log("filterEntities", filterEntities);
-    let setF = new Set(filterEntities);
-    filterEntities = [...setF];
-  }
 
-  filterEntities = filterEntities.map((n, i) => ({ name: n, id: i }));
+    let uniqueLabels = new Set();
+
+    filterEnts = filterEnts.filter((e) => {
+      if (!uniqueLabels.has(e.label)) {
+        uniqueLabels.add(e.label);
+        return true;
+      } else {
+        return false;
+      }
+    });
+    return filterEnts;
+  };
+
   // reset filter if no entity
   if (tableContext.filterCategory === "") {
     tableData = unsortedData;
@@ -130,20 +140,25 @@ export default function TableNav() {
     });
     tableData = sortedData;
   }
-
+  const [selectValue, setSelectValue] = useState();
   const handleFilterCatSelect = (e) => {
     e.preventDefault();
+    setSelectValue("нет фильтра");
     console.log("setFilterCat", e.target.value);
     if (e.target.value === "") {
       tableContext.setFilterCategory("");
       tableContext.setFilterEntity("");
     } else {
       tableContext.setFilterCategory(e.target.value);
+      tableContext.setFilterEntity("");
+
+      setFilterEnt(getFilterEntOptions(e.target.value));
     }
   };
 
   const handleFilterEntSelect = (e) => {
     e.preventDefault();
+    setSelectValue(e.target.value);
     tableContext.setFilterEntity(e.target.value);
   };
 
@@ -246,10 +261,11 @@ export default function TableNav() {
               <TableFilterEntities
                 id="filter-entity-select"
                 type="select"
-                options={filterEntities}
+                options={filterEnt}
                 name="filter-entity-select"
                 selectHandle={handleFilterEntSelect}
                 disableTag={disableTag}
+                selectValue={selectValue}
               ></TableFilterEntities>
             </div>
           </div>

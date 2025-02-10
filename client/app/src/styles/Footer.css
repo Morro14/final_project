@@ -1,5 +1,4 @@
 .footer {
-  font-family: "PT Astra Sans", serif;
   background-color: #153e6c;
   border-top: solid 1px #153e6c;
   display: flex;
@@ -28,7 +27,6 @@
   text-wrap: balance;
 }
 .footer-arrow {
-  font-weight: bold;
   font-size: 16px;
   position: relative;
   bottom: -17px;

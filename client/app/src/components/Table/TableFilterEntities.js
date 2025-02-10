@@ -6,12 +6,13 @@ export default function TableFilterEntities({
   id,
   selectHandle,
   disableTag,
+  selectValue,
 }) {
   let disableTagS = false;
   if (disableTag === "true") {
     disableTagS = true;
   }
-  console.log("ent", options);
+  console.log("filterEnt", options);
   return (
     <div className="filter-select-container">
       <div className="filter-select-inner">
@@ -21,24 +22,22 @@ export default function TableFilterEntities({
           className="filter-select-el table-select-el filter-entity-select"
           name={name}
           onChange={selectHandle}
-          defaultValue={options[0] ? options[0] : ""}
+          // defaultValue={options[0] ? options[0] : ""}
           disabled={disableTagS}
+          value={selectValue}
         >
-          {options.map((o) => {
-            if (o.name === "нет фильтра") {
+          {options.map((o, i) => {
+            if (o.label === "нет фильтра") {
               return (
-                <option key={"filter-opt-" + o.id} value="" id={o.name.label}>
-                  {o.name}
+                <option key={"filter-opt-empty"} value="" id="filter-opt-empty">
+                  {o.label}
                 </option>
               );
             }
+
             return (
-              <option
-                key={"filter-opt-" + o.id}
-                value={o.name.label}
-                id={o.name.id}
-              >
-                {o.name.label}
+              <option key={"filter-opt-" + i} value={o.label} id={o.id}>
+                {o.label}
               </option>
             );
           })}

@@ -1,8 +1,23 @@
+@font-face {
+  font-family: "PT Astra Sans";
+  src: url("./fonts/PT_Astra_Sans_Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "PT Astra Sans";
+  src: url("./fonts/PT_Astra_Sans_Bold.ttf") format("truetype");
+  font-weight: bold;
+  font-style: normal;
+}
+
 body {
   margin: 0;
   padding: 0;
   height: 100%;
-
+  font-family: "PT Astra Sans";
+  font-weight: normal;
   scrollbar-width: auto;
 }
 a {
