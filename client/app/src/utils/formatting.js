@@ -32,14 +32,15 @@ export const formatRowData = (data) => {
 
   Object.keys(rest).map((k) => {
     if (!rest[k]) {
-      formatted[k] = { label: "отсутствует" };
+      formatted[k] = { label: "отсутствует", type: k };
     } else if (typeof rest[k] === "object") {
       formatted[k] = {
+        type: k,
         label: rest[k]["name"] ? rest[k]["name"] : rest[k]["id_num"],
         id: rest[k]["id"],
       };
     } else {
-      formatted[k] = { label: rest[k], id: data["id"] };
+      formatted[k] = { type: k, label: rest[k], id: data["id"] };
     }
   });
   return formatted;

@@ -1,5 +1,10 @@
 export const nameDict = {
   // labels
+  reclamation: "рекламация",
+  machine: "машина",
+  maintenance: "Т.О.",
+  reference: "справочник",
+
   engine_id: "Зав.№ двигателя",
   id_num: "Заводской номер машины",
   main_bridge_id: "Зав.№ главного моста",
@@ -57,46 +62,46 @@ export const filterFields = {
   references: ["ref_type", "name"],
 };
 
-export const addFormFields = {
-  // form fields
-  machine: [
-    "service_company",
-    "id_num",
-    "model",
-    "engine_model",
-    "engine_id",
-    "transmission_model",
-    "transmission_id",
-    "main_bridge_model",
-    "main_bridge_id",
-    "steerable_bridge_model",
-    "steerable_bridge_id",
-    "supply_contract_num_date",
-    "cargo_receiver",
-    "equipment_add",
-  ],
-  maintenance: [
-    "service_company",
-    "mt_company",
-    "machine",
-    "type",
-    "mt_date",
-    "operating_time",
-    "order_num",
-    "order_date",
-  ],
-  reclamation: [
-    "machine",
-    "refuse_date",
-    "operating_time",
-    "failure_node",
-    "failure_description",
-    "recovery_method",
-    "spare_parts_use",
-    "recovery_date",
-    "machine_downtime",
-  ],
-};
+// export const addFormFields = {
+//   // form fields
+//   machine: [
+//     "service_company",
+//     "id_num",
+//     "model",
+//     "engine_model",
+//     "engine_id",
+//     "transmission_model",
+//     "transmission_id",
+//     "main_bridge_model",
+//     "main_bridge_id",
+//     "steerable_bridge_model",
+//     "steerable_bridge_id",
+//     "supply_contract_num_date",
+//     "cargo_receiver",
+//     "equipment_add",
+//   ],
+//   maintenance: [
+//     "service_company",
+//     "mt_company",
+//     "machine",
+//     "type",
+//     "mt_date",
+//     "operating_time",
+//     "order_num",
+//     "order_date",
+//   ],
+//   reclamation: [
+//     "machine",
+//     "refuse_date",
+//     "operating_time",
+//     "failure_node",
+//     "failure_description",
+//     "recovery_method",
+//     "spare_parts_use",
+//     "recovery_date",
+//     "machine_downtime",
+//   ],
+// };
 
 export const textareaFields = [
   "cargo_receiver",
@@ -128,7 +133,7 @@ export const choiceFields = {
 
 export const dateFields = ["mt_date", "order_date"];
 
-export const datetimeFields = ["refuse_date", "recovery_date"];
+export const datetimeFields = ["refuse_date", "recovery_date", "shipment_date"];
 
 export const categoryFieldToRef = (field) => {
   switch (field) {

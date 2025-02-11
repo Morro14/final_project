@@ -10,7 +10,7 @@ import { nameDict } from "../../utils/names";
 import { inputValidation } from "./form_components/Validations";
 import { getChoices } from "../../utils/formChoices";
 import { TextArea } from "./form_components/TextArea";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/EditForm.css";
 
@@ -102,16 +102,26 @@ export const EditForm = () => {
         setAddSuccess("406");
       });
   });
+  // default reference type
+  const refType = refData.ref_type;
+  // set deletion success status
   const [deleteSuccess, setDeleteSuccess] = useState(false);
   // modal window for delete action
   const [displayValue, setDisplayValue] = useState("modal-hide");
   const buttonGetModal = () => {
     setDisplayValue("modal-display");
   };
+  const closeButton = () => {
+    setDisplayValue("modal-hide");
+  };
   const deleteModalWidnow = () => {
     return (
       <div className={`modal ${displayValue}`}>
-        <div className="modal-content">
+        <div className={`modal-content`}>
+          <span onClick={closeButton} className="close">
+            &times;
+          </span>
+          <p className="modal-text">Вы действительно хотите удалить данные?</p>
           <button
             className="button delete-confirm-button"
             onClick={(e) => buttonDeleteFunction(id)}
@@ -183,6 +193,7 @@ export const EditForm = () => {
           name={field}
           defaultData={defaultData}
           category={category}
+          selectValue={refType}
         ></Select>
       );
     }
@@ -193,7 +204,7 @@ export const EditForm = () => {
   function buttonNavFunction(e) {
     navigate("/dashboard");
   }
-  console.log(refData);
+
   return deleteSuccess ? (
     <>
       <button className="button" onClick={buttonNavFunction}>
@@ -203,7 +214,7 @@ export const EditForm = () => {
       <h4>{category}</h4>
       <div>
         {Object.entries(refData).map(([k, v]) => (
-          <div>{k + ": " + v}</div>
+          <div key={"row-" + k}>{k + ": " + v}</div>
         ))}
       </div>
     </>

@@ -7,17 +7,17 @@ export const Select = ({
   options,
   name,
   className,
-  defaultData,
+
   category,
+  selectValue,
 }) => {
   const { register } = useFormContext();
   let optionsChecked = true;
   if (!options) {
     optionsChecked = false;
   }
-  const setDefault = (opt) => {
-    return opt === defaultData;
-  };
+
+  const defaultSelectValue = selectValue;
   return (
     <div className={`input-container`}>
       <div className={`input-label-container`}>
@@ -28,12 +28,11 @@ export const Select = ({
             type={type}
             className={`select-el`}
             name={name}
-            defaultValue={defaultData}
+            defaultValue={defaultSelectValue}
             {...register(name)}
           >
             {optionsChecked ? (
               options.map((o) => {
-                const selectedValue = setDefault(o);
                 return (
                   <option
                     key={"add-form-opt" + o.id}

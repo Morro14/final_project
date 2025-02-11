@@ -67,3 +67,12 @@
 .sort-form-button {
   height: 21px;
 }
+.delete-button {
+  margin-top: 8px;
+  background-color: #d20a11;
+  font-weight: bold;
+  color: white;
+}
+.delete-button:hover {
+  background-color: #d45d61;
+}

@@ -183,7 +183,7 @@ export default function TableNav() {
     if (access) {
       return (
         <NavLink
-          className="button tab-button tab-button-add"
+          className="button tab-button"
           to={"/dashboard/references"}
           onClick={tabOnClick}
         >

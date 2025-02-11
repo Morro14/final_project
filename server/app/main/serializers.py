@@ -25,6 +25,13 @@ choices = list(types.keys())
 class ReferenceSerializer(serializers.ModelSerializer):
     ref_type = serializers.ChoiceField(choices=choices)
 
+    def to_internal_value(self, data):
+        try:
+            ref = Reference.objects.get(name=data)
+        except Reference.DoesNotExist:
+            return super().to_internal_value(data=data)
+        return ref
+
     def create(self, validated_data):
         ref = Reference(**validated_data)
         ref.save()
@@ -53,6 +60,8 @@ class MachineSerializer(serializers.ModelSerializer):
     service_company = ReferenceSerializer()
     id_num = serializers.CharField(validators=[UniqueValidator(queryset=Machine.objects.all())])
 
+    # TODO
+
     # sorting_fields = serializers.SerializerMethodField()
     @extend_schema_field({'type': 'array', 'items': {'type', 'string'}})
     def get_sorting_fields(self, obj):
@@ -64,6 +73,13 @@ class MachineSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         machine = Machine(**validated_data)
         machine.save()
+        return machine
+
+    def to_internal_value(self, data):
+        try:
+            machine = Machine.objects.get(id_num=data)
+        except Machine.DoesNotExist:
+            return super().to_internal_value(data)
         return machine
 
     class Meta:
@@ -92,6 +108,7 @@ class MachineSerializer(serializers.ModelSerializer):
 
 
 class MachineRestrictedSerializer(serializers.ModelSerializer):
+    # a serializer for non auth view
     model = ReferenceSerializer()
     engine_model = ReferenceSerializer()
     transmission_model = ReferenceSerializer()

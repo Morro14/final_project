@@ -24,7 +24,7 @@ export default function AddFormIndex({ children }) {
     addMachineButton = (
       <Link
         className="button add-form-index-button"
-        to={"/dashboard/create/" + links[1]}
+        to={"/dashboard/create/" + links[0]}
       >
         {buttonNames[0]}
       </Link>

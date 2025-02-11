@@ -281,13 +281,13 @@ class CreateView(APIView):
         user_manager = user.groups.filter(name='Manager').exists()
         data = request.data
         data_new = dict(data)
-
         if category == 'reference':
             if user_manager:
                 serializer = ReferenceSerializer(data=data_new)
                 serializer.is_valid()
-
+                print(serializer.errors)
                 if serializer.is_valid():
+
                     serializer.save()
                     return Response(status=200, data={'text': 'Data has been added'})
                 else:

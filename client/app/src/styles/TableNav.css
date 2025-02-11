@@ -71,13 +71,13 @@
   font-size: 20px;
   font-family: "PT Astra Sans", sans-serif;
   font-weight: bold;
-  color: #163e6c;
+  color: #163e6cb4;
   text-wrap: nowrap;
 }
 
 .tab-bar .active {
-  background-color: #4f7197;
-  color: #e4e1d7;
+  background-color: #163e6cb4;
+  color: #f0eee7;
 }
 
 .tab-bar {
