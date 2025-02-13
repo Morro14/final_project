@@ -3,12 +3,12 @@
     клиент:
         /client/app 
         npm install 
-        number run
+        npm run
     сервер:
         /server
         pip install -r requirements.txt
         /server/app
-        py manage.py unserved
+        py manage.py runserver 
 
 данные авторизации для тестирования:
     роль администратора и менеджера
@@ -25,8 +25,13 @@
     - ссылки на справочные данные в таблице
     - (дополнительно) возможность экспортировать данные таблицы в xls формате
 
+основные библиотеки: react, react-dom-router, react-context
 api:
-    доступна схема со SwaggerUI интерфейсом по пути /api/scheme/swaggerui
+    схема c SwaggerUI интерфейсом по пути /api/scheme/swagger-ui
+
+реализована валидация форм при создании и редактировании данных
+
+
 
 
          
