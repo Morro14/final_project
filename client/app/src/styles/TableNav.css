@@ -71,12 +71,20 @@
   font-size: 20px;
   font-family: "PT Astra Sans", sans-serif;
   font-weight: bold;
-  color: #163e6cb4;
+  color: #2e5581;
   text-wrap: nowrap;
 }
 
+.nav-title-export-container {
+  display: flex;
+  align-items: center;
+}
+.nav-title-export-container > span {
+  margin-left: 20px;
+  margin-top: 2px;
+}
 .tab-bar .active {
-  background-color: #163e6cb4;
+  background-color: #2e5581;
   color: #f0eee7;
 }
 
@@ -87,10 +95,7 @@
 .tab-bar-left {
   display: flex;
 }
-.tab-button {
-  border-collapse: collapse;
-  margin-right: 8px;
-}
+
 .select-block-label {
   color: #163e6c;
   font-size: 14px;
@@ -133,11 +138,25 @@
   }
   .tab-button {
     margin-bottom: 4px;
+    width: 120px;
   }
 }
 @media (max-width: 800px) {
   .filter-select-elements {
     flex-direction: column;
+  }
+  .nav-title-export-container {
+    display: block;
+  }
+}
+
+@media (max-width: 850px) {
+  .nav-title-export-container {
+    flex-direction: column;
+    align-items: start;
+  }
+  .nav-title-export-container > span {
+    margin-left: 0;
   }
 }
 @media (max-width: 1140px) {

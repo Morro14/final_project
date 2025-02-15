@@ -12,7 +12,7 @@ export default function TableFilterEntities({
   if (disableTag === "true") {
     disableTagS = true;
   }
-  console.log("filterEnt", options);
+  // console.log("filterEntOptions", options);
   return (
     <div className="filter-select-container">
       <div className="filter-select-inner">

@@ -3,7 +3,6 @@ import { serverURL } from "../App.js";
 import "../styles/SearchResults.css";
 import "../styles/Tooltip.css";
 import { useLoaderData } from "react-router-dom";
-import ErrorComp from "./Errors/ErrorComp.js";
 import { linkNames, nameDict } from "../utils/names.js";
 import { formatRowData, getLink } from "../utils/formatting.js";
 
@@ -24,7 +23,6 @@ export async function detailsLoader({ params }) {
     });
 
   if (!data) {
-    console.log("sending restricted request");
     await axios
       .get(`${serverURL}/machines/restricted/${params.id}`)
       .then((r) => {
@@ -64,10 +62,10 @@ export default function SearchResults() {
               <tr key={"rlst_tr" + key}>
                 <th key={"rslt_th_" + key}>{fieldLabel(key)}</th>
                 <td key={"rlst_td" + key}>
-                  {getLink(key, value, linkNames)}
+                  {getLink(key, value)}
 
                   <div className={`tooltip tooltip-${key}`} key={key}>
-                    {value}
+                    {value.label}
                   </div>
                 </td>
               </tr>

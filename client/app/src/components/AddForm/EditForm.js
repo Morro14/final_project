@@ -1,38 +1,49 @@
+import { useLoaderData, useParams, useNavigate } from "react-router-dom";
+import { nameDict, categoryFieldToRef } from "../../utils/names";
+import { Form } from "react-router-dom";
+
+import "../../styles/EditForm.css";
+import axios from "axios";
+import { serverURL } from "../../App";
 import { FormProvider, useForm } from "react-hook-form";
 import { Input } from "./form_components/Input";
-import { Form } from "react-hook-form";
-import axios from "axios";
-import { useLoaderData, useOutletContext, useParams } from "react-router-dom";
-import { serverURL } from "../../App";
-import { Select } from "./form_components/Select";
-import { formatSchema, formatDateTime } from "../../utils/formatting";
-import { nameDict } from "../../utils/names";
-import { inputValidation } from "./form_components/Validations";
-import { getChoices } from "../../utils/formChoices";
+import { DateTimeInput } from "./form_components/DateTimeInput";
 import { TextArea } from "./form_components/TextArea";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "../../styles/EditForm.css";
+import { Select } from "./form_components/Select";
+import {
+  dateValidationObj,
+  inputValidation,
+  timeValidationObj,
+} from "./form_components/Validations";
+import { getChoices } from "../../utils/formChoices";
+import { useState } from "react";
+import { formatDateTime, formatSchema } from "../../utils/formatting";
 
-export async function refEditLoader({ params }) {
+export async function editFormLoader({ params }) {
   const category = params.category;
   const id = params.id;
-  const data = await axios
-    .get(serverURL + "/references/" + id)
-    .then((r) => {
-      return r;
-    })
-    .catch((r) => {
-      if (r.status !== 200) {
-        throw new Response("Not Found", {
-          status: r.status,
-          statusText: r.response.statusText,
-        });
-      }
-    });
+  // load select options
 
-  const schemaData = await axios
-    .options(serverURL + "/references/")
+  const dataOptions =
+    category !== "reference"
+      ? await axios
+          .get(serverURL + "/create/" + category)
+          .then((r) => {
+            console.log(r);
+            return r;
+          })
+          .catch((r) => {
+            if (r.status !== 200) {
+              throw new Response("Not Found", {
+                status: r.status,
+                statusText: r.response.statusText,
+              });
+            }
+          })
+      : null;
+  // load current object data
+  const data = await axios
+    .get(serverURL + "/" + category + "s/" + id)
     .then((r) => {
       return r;
     })
@@ -44,50 +55,48 @@ export async function refEditLoader({ params }) {
         });
       }
     });
-  return [data, schemaData];
+  //load schema
+  const schemaData = await axios
+    .options(serverURL + "/" + category + "s")
+    .then((r) => {
+      return r;
+    })
+    .catch((r) => {
+      if (r.status !== 200) {
+        throw new Response("Not Found", {
+          status: r.status,
+          statusText: r.response.statusText,
+        });
+      }
+    });
+  return [data, schemaData, dataOptions];
 }
 
-export const EditForm = () => {
-  const navigate = useNavigate();
-  const { category } = useParams("category");
-  // id = name (change later)
-  const { id } = useParams("id");
-  const user = useOutletContext().user;
+export default function EditForm() {
   const methods = useForm();
-  const [data, schemaData] = useLoaderData();
-
-  const schema = schemaData.data.actions.POST;
-  const userRef = user.user_ref;
-  // get form fields
-  const formattedSchema = formatSchema(schema, user.user_ref);
-  const formFields = Object.keys(formattedSchema);
-
-  // get select options
-  const options = getChoices(category, data, formattedSchema);
-
-  // ref data
-  const refData = data.data;
-  // set success status
+  const navigate = useNavigate();
+  const category = useParams("category").category;
   const [addSuccess, setAddSuccess] = useState("");
-  // handle submit
-  const onSubmit = methods.handleSubmit((formData) => {
-    formData["name_prev"] = refData.name;
-    formData["id"] = refData.id;
-    const formattedData = formatDateTime(formData);
-    // add old name in case the name is changed
+  const [data, schemaData, dataOptions] = useLoaderData();
+  const optionsData = category !== "reference" ? dataOptions.data : null;
+  const id = data.data.id;
+  const userRef = "Manager";
+  const formattedSchemaData = formatSchema(
+    schemaData.data.actions.POST,
+    userRef
+  );
 
+  let options = getChoices(category, optionsData, formattedSchemaData);
+
+  let formFields = Object.keys(formattedSchemaData);
+
+  const onSubmit = methods.handleSubmit((formData) => {
+    const formattedData = formatDateTime(formData);
+    formData["id"] = id;
     localStorage.setItem(
       "formData",
       JSON.stringify({ data: formData, category: category })
     );
-    switch (userRef) {
-      case "client":
-        formattedData.client = data.data.user_ref.name;
-        break;
-      case "service_company" || "service":
-        formattedData.service_company = data.data.user_ref.name;
-        break;
-    }
 
     axios
       .patch(serverURL + "/edit/" + category + "/" + id, formattedData)
@@ -102,18 +111,121 @@ export const EditForm = () => {
         setAddSuccess("406");
       });
   });
-  // default reference type
-  const refType = refData.ref_type;
-  // set deletion success status
-  const [deleteSuccess, setDeleteSuccess] = useState(false);
-  // modal window for delete action
+
+  const titleCategoty = {
+    reclamation: "рекламации",
+    maintenance: "техническом обслуживании",
+    machine: "технике",
+  };
+  const getField = (field) => {
+    const refField = categoryFieldToRef(field);
+    if (
+      formattedSchemaData[field].type === "string" &&
+      formattedSchemaData[field].max_length > 120
+    ) {
+      const defaultValue = data.data[refField] ? data.data[refField] : "";
+      return (
+        <TextArea
+          label={nameDict[field]}
+          type="text"
+          id={field}
+          key={"textarea_" + field}
+          maxLength={220}
+          validation={inputValidation}
+          name={field}
+          defaultData={defaultValue}
+        ></TextArea>
+      );
+    } else if (
+      formattedSchemaData[field]["type"] === "nested object" ||
+      formattedSchemaData[field]["type"] === "field" ||
+      formattedSchemaData[field]["type"] === "choice"
+    ) {
+      let optionsF = options[field]
+        ? options[field]
+        : options[refField] || options["machines"];
+      const defaultValue = data.data[field] ? data.data[field].name : null;
+      return (
+        <Select
+          label={nameDict[field]}
+          type="select"
+          id={field}
+          options={optionsF}
+          name={field}
+          defaultData={defaultValue}
+        ></Select>
+      );
+    } else if (formattedSchemaData[field]["type"] === "date") {
+      const defaultValue = data.data[refField] ? data.data[refField] : "";
+      return (
+        <Input
+          label={nameDict[field]}
+          name={field}
+          type="date_"
+          id={field}
+          placeholder="YYYY-mm-dd"
+          key={"inpt" + field}
+          validation={dateValidationObj}
+          defaultData={defaultValue}
+        ></Input>
+      );
+    } else if (formattedSchemaData[field]["type"] === "datetime") {
+      const defaultValue = data.data[refField] ? data.data[refField] : "";
+      return (
+        <div className="datetime-el">
+          {nameDict[field]}
+          <div className="datetime-container">
+            <DateTimeInput
+              label={"Дата"}
+              name={field + "_date"}
+              type="date_"
+              id={field + "_date"}
+              placeholder="YYYY-mm-dd"
+              key={"inpt" + field + "_date"}
+              validation={dateValidationObj}
+              defaultData={defaultValue}
+            ></DateTimeInput>
+            <DateTimeInput
+              label={"Время"}
+              name={field + "_time"}
+              type="time_"
+              id={field + "_time"}
+              placeholder="hh:mm"
+              key={"inpt" + field + "_time"}
+              validation={timeValidationObj}
+              defaultData={defaultValue}
+            ></DateTimeInput>
+          </div>
+        </div>
+      );
+    } else {
+      const defaultValue = data.data[refField] ? data.data[refField] : "";
+      return (
+        <Input
+          label={nameDict[field]}
+          name={field}
+          type="text"
+          id={field}
+          placeholder={nameDict[field]}
+          key={"inpt" + field}
+          validation={inputValidation}
+          defaultData={defaultValue}
+        ></Input>
+      );
+    }
+  };
+  const errorMsg = addSuccess !== "" ? "Не удалось добавить данные" : "";
   const [displayValue, setDisplayValue] = useState("modal-hide");
+  const [deleteSuccess, setDeleteSuccess] = useState(false);
   const buttonGetModal = () => {
     setDisplayValue("modal-display");
   };
   const closeButton = () => {
     setDisplayValue("modal-hide");
   };
+  function buttonNavFunction(e) {
+    navigate("/dashboard");
+  }
   const deleteModalWidnow = () => {
     return (
       <div className={`modal ${displayValue}`}>
@@ -133,11 +245,9 @@ export const EditForm = () => {
     );
   };
   async function buttonDeleteFunction() {
-    console.log("buttonDeleteFunction", id);
     await axios
       .delete(serverURL + "/references/" + id, { id: id })
       .then((r) => {
-        console.log("delete response", r);
         setDeleteSuccess(true);
       })
       .catch((r) => {
@@ -149,62 +259,6 @@ export const EditForm = () => {
         }
       });
   }
-  // render field
-  const getField = (field) => {
-    if (
-      formattedSchema[field]["type"] === "string" &&
-      formattedSchema[field]["max_length"] <= 120
-    ) {
-      let defaultData = refData[field];
-      return (
-        <Input
-          label={nameDict[field]}
-          name={field}
-          type="text"
-          id={field}
-          key={"inpt_" + field}
-          validation={inputValidation}
-          defaultData={defaultData}
-        ></Input>
-      );
-    } else if (formattedSchema[field]["max_length"] > 120) {
-      let defaultData = refData[field];
-      return (
-        <TextArea
-          label={nameDict[field]}
-          name={field}
-          type="textarea"
-          id={field}
-          key={"textarea_" + field}
-          max_length={200}
-          validation={inputValidation}
-          defaultData={defaultData}
-        ></TextArea>
-      );
-    } else if ((formattedSchema[field]["type"] = "choice")) {
-      let optionsF = options[field];
-      let defaultData = nameDict[refData[field]];
-      return (
-        <Select
-          label={nameDict[field]}
-          type="select"
-          id={field}
-          options={optionsF}
-          name={field}
-          defaultData={defaultData}
-          category={category}
-          selectValue={refType}
-        ></Select>
-      );
-    }
-  };
-
-  const errorMsg = addSuccess !== "" ? "Не удалось добавить данные" : "";
-  // return button function
-  function buttonNavFunction(e) {
-    navigate("/dashboard");
-  }
-
   return deleteSuccess ? (
     <>
       <button className="button" onClick={buttonNavFunction}>
@@ -213,22 +267,29 @@ export const EditForm = () => {
       <h1>Данные успешно удалены</h1>
       <h4>{category}</h4>
       <div>
-        {Object.entries(refData).map(([k, v]) => (
+        {Object.entries(data.data).map(([k, v]) => (
           <div key={"row-" + k}>{k + ": " + v}</div>
         ))}
       </div>
     </>
   ) : (
-    <div className="edit-form-main">
-      <h2 className="add-form-title">Изменить справочные данные</h2>
+    <div className="add-form-container">
+      <h2 className="add-form-title">
+        Добавить данные о {titleCategoty[category]}
+      </h2>
       <h4 className="add-form-error-msg">{errorMsg}</h4>
       <FormProvider {...methods}>
-        <Form onSubmit={(e) => e.preventDefault()} noValidate>
+        <Form
+          onSubmit={(e) => e.preventDefault()}
+          className="add-form"
+          noValidate
+        >
           {formFields.map((f) => (
-            <div className="edit-form-section" key={"edit-form-section-" + f}>
+            <div className="add-form-section" key={"add-form-section-" + f}>
               {getField(f)}
             </div>
           ))}
+
           <button className="add-form-button button" onClick={onSubmit}>
             Добавить
           </button>
@@ -243,4 +304,4 @@ export const EditForm = () => {
       {deleteModalWidnow(displayValue, id)}
     </div>
   );
-};
+}

@@ -34,7 +34,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
     path('api/machines/restricted/<str:id_num>', MachineRestrictedView.as_view()),
-    path('api/edit/reference/<path:name>', CreateView.as_view()),
+    path('api/edit/<str:category>/<str:id>', CreateView.as_view()),
     path('api/create/<str:category>', CreateView.as_view()),
     # path('api/references/<path:name>', ref_view),
     # path('api/references/', ref_list_view),

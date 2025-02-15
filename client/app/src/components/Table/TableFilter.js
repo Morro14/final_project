@@ -5,7 +5,13 @@ export default function TableFilter({
   type,
   id,
   selectHandle,
+  disableTag,
 }) {
+  // let disableCheck = "false";
+  // if (!dataCheck) {
+  //   disableCheck = "true";
+  // }
+  // console.log("category filter", options);
   return (
     <div className="filter-select-container">
       <div className="filter-select-inner">
@@ -15,6 +21,7 @@ export default function TableFilter({
           className="filter-select-el table-select-el"
           name={name}
           onChange={selectHandle}
+          disabled={!disableTag}
         >
           <option value="">нет фильтра</option>
           {options.map((o) => (

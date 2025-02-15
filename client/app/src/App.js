@@ -1,5 +1,5 @@
 import "./App.css";
-import Dashboard, { testLoader } from "./components/Dashboard.js";
+import Dashboard from "./components/Dashboard.js";
 import Main from "./components/Main.js";
 
 import SearchResults from "./components/SearchResults.js";
@@ -18,7 +18,6 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
   RouterProvider,
-  Navigate,
 } from "react-router-dom";
 
 import TableNav, { sortedLoader } from "./components/Table/TableNav.js";
@@ -29,9 +28,8 @@ import ErrorComp from "./components/Errors/ErrorComp.js";
 import { ErrorBoundary } from "./components/Errors/ErrorBoundary.js";
 import { AddFormSuccess } from "./components/AddForm/AddFormSuccess.js";
 import AddFormMain from "./components/AddForm/AddFormMain.js";
-import TableSorted from "./components/Table/TableSorted.js";
-import { EditForm } from "./components/AddForm/EditForm.js";
-import { refEditLoader } from "./components/AddForm/EditForm.js";
+import EditForm, { editFormLoader } from "./components/AddForm/EditForm.js";
+
 import SearchErrorComp from "./components/Errors/SearchError.js";
 
 export const serverURL = "http://127.0.0.1:8000/api";
@@ -81,7 +79,7 @@ const router = createBrowserRouter(
             errorElement={<ErrorComp></ErrorComp>}
           >
             <Route
-              loader={refEditLoader}
+              loader={editFormLoader}
               path={"/dashboard/edit/:category/:id"}
               element={<EditForm />}
               errorElement={<ErrorComp></ErrorComp>}

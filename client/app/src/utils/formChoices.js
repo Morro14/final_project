@@ -2,7 +2,6 @@ import { nameDict } from "./names";
 
 export const getChoices = (category, data, schema) => {
   let options = {};
-
   if (category === "reference") {
     options = { ref_type: [] };
     schema.ref_type.choices.forEach((r, i) => {
@@ -27,18 +26,17 @@ export const getChoices = (category, data, schema) => {
   data.ref.forEach((ref) => {
     options[ref.ref_type].push(ref);
   });
+
   if (category !== "machine") {
     options["machines"] = data.machines;
     const machinesFormatted = options["machines"].map((e, i) => ({
       id: i,
       name: e.id_num,
     }));
-    console.log("machines formatted", machinesFormatted);
     options["machines"] = machinesFormatted;
   } else if (category === "machines") {
     options["model"] = options["machine_model"];
     delete options["machine_model"];
   }
-
   return options;
 };

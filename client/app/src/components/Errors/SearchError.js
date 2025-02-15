@@ -1,7 +1,6 @@
 import {
   useRouteError,
   isRouteErrorResponse,
-  useSearchParams,
   useParams,
 } from "react-router-dom";
 import "../../styles/Errors.css";

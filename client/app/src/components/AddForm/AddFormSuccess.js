@@ -25,7 +25,9 @@ export const AddFormSuccess = () => {
       </h4>
       <div>
         {Object.entries(formData).map(([k, v]) => (
-          <div key={k + "add-frm-scs-key"}>{`${nameDict[k]}: ${v}`}</div>
+          <div key={k + "add-frm-scs-key"}>{`${nameDict[k]}: ${
+            nameDict[v] ? nameDict[v] : v
+          }`}</div>
         ))}
       </div>
     </>

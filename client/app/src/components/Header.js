@@ -4,7 +4,6 @@ import "../styles/Buttons.css";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../media/Logotype_accent.png";
-import telegram_logo from "../media/telegram_logo.png";
 import { useAuth } from "./Auth/AuthProvider";
 
 export default function Header({ params }) {

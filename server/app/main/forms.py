@@ -23,7 +23,7 @@ for f in date_formats:
 class MyUserCreationForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        user_ref_query = Reference.objects.filter(ref_type='service') | Reference.objects.filter(ref_type='client')
+        user_ref_query = Reference.objects.filter(ref_type='service_company') | Reference.objects.filter(ref_type='client')
         self.fields['user_ref'].queryset = user_ref_query
 
     class Meta:
@@ -34,7 +34,7 @@ class MyUserCreationForm(UserCreationForm):
 
 
 class MyUserChangenForm(UserChangeForm):
-    user_ref = Reference.objects.filter(ref_type='service') | Reference.objects.filter(ref_type='client')
+    user_ref = Reference.objects.filter(ref_type='service_company') | Reference.objects.filter(ref_type='client')
 
     class Meta:
         model = MyUser
@@ -91,7 +91,7 @@ class ReclamationModelForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         failure_node = Reference.objects.filter(ref_type='failure_node')
         recovery_method = Reference.objects.filter(ref_type='recovery_method')
-        service_company = Reference.objects.filter(ref_type='service')
+        service_company = Reference.objects.filter(ref_type='service_company')
 
         self.fields['failure_node'].queryset = failure_node
         self.fields['recovery_method'].queryset = recovery_method
@@ -109,8 +109,8 @@ class MaintenanceModelForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         type = Reference.objects.filter(ref_type='maintenance_type')
-        service_company = Reference.objects.filter(ref_type='service')
-        mt_company = Reference.objects.filter(ref_type='service')
+        service_company = Reference.objects.filter(ref_type='service_company')
+        mt_company = Reference.objects.filter(ref_type='service_company')
 
         self.fields['type'].queryset = type
         self.fields['service_company'].queryset = service_company

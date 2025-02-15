@@ -12,7 +12,9 @@ export default function AddFormIndex({ children }) {
 
   let addReferenceButton = "";
   let addMachineButton = "";
-  if (user.groups.find((g) => g.name === "Manager")) {
+  let addReclamationButton = "";
+  const userManager = user.groups.find((g) => g.name === "Manager");
+  if (userManager) {
     addReferenceButton = (
       <Link
         className="button add-form-index-button"
@@ -30,7 +32,20 @@ export default function AddFormIndex({ children }) {
       </Link>
     );
   }
-
+  if (
+    userManager ||
+    user.user_type === "service" ||
+    user.user_type === "service_company"
+  ) {
+    addReclamationButton = (
+      <Link
+        className="button add-form-index-button"
+        to={"/dashboard/create/" + links[2]}
+      >
+        {buttonNames[2]}
+      </Link>
+    );
+  }
   return (
     <div className="add-form-index">
       <h2>Добавить данные:</h2>
@@ -42,12 +57,7 @@ export default function AddFormIndex({ children }) {
         >
           {buttonNames[1]}
         </Link>
-        <Link
-          className="button add-form-index-button"
-          to={"/dashboard/create/" + links[2]}
-        >
-          {buttonNames[2]}
-        </Link>
+        {addReclamationButton}
         {addReferenceButton}
       </div>
     </div>

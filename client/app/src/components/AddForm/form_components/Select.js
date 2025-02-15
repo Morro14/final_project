@@ -9,7 +9,7 @@ export const Select = ({
   className,
 
   category,
-  selectValue,
+  defaultValue,
 }) => {
   const { register } = useFormContext();
   let optionsChecked = true;
@@ -17,7 +17,6 @@ export const Select = ({
     optionsChecked = false;
   }
 
-  const defaultSelectValue = selectValue;
   return (
     <div className={`input-container`}>
       <div className={`input-label-container`}>
@@ -28,7 +27,7 @@ export const Select = ({
             type={type}
             className={`select-el`}
             name={name}
-            defaultValue={defaultSelectValue}
+            defaultValue={defaultValue}
             {...register(name)}
           >
             {optionsChecked ? (

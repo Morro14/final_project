@@ -1,11 +1,18 @@
 import { nameDict } from "../../utils/names";
 import { formatHeaders, formatRowData, getLink } from "../../utils/formatting";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useTableCon } from "./TableContext";
 import "../../styles/Table.css";
 
 export default function TableSorted({ params }) {
   const tabActive = params.tab;
   const sortedData = params.list;
+  const tableRef = useRef();
+  const tableContext = useTableCon();
+  useEffect(() => {
+    tableContext.setTableRef(tableRef);
+  }, [tableContext, tableRef]);
+
   const headerLabel = (name_prev) => {
     return nameDict[name_prev];
   };
@@ -15,7 +22,6 @@ export default function TableSorted({ params }) {
   const [scrollPosition, setScrollPosition] = useState("left");
   const handleScroll = (e) => {
     const { scrollLeft, scrollLeftMax } = e.target;
-    // console.log(e.target)
 
     if (scrollLeft === 0) {
       setScrollPosition("left");
@@ -36,13 +42,15 @@ export default function TableSorted({ params }) {
     return "fade-sides";
   };
   const fadeClass = getFadeClass();
-  console.log("sortedData", sortedData);
   return !sortedData[0] ? (
     <div>Нет Данных</div>
   ) : (
     <>
       <div className={`table-container ${fadeClass}`} onScroll={handleScroll}>
-        <table className={`table-inner ${tabActive}-table table`}>
+        <table
+          className={`table-inner ${tabActive}-table table`}
+          ref={tableRef}
+        >
           <thead>
             <tr>
               {Object.entries(formatHeaders(sortedData[0])).map(
@@ -57,7 +65,7 @@ export default function TableSorted({ params }) {
               <tr key={`${tabActive}` + "_tr_" + item.id}>
                 {Object.entries(formatRowData(item)).map(([key, field]) => (
                   <td key={`${tabActive}` + item.id + "_" + key}>
-                    {getLink(key, field)}
+                    {getLink(key, field, tabActive)}
 
                     {/* <div
                       className={"tooltip"}
