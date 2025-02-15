@@ -9,8 +9,8 @@ export const nameDict = {
   id_num: "Заводской номер машины",
   main_bridge_id: "Зав.№ главного моста",
   main_bridge_model: "Модель главного моста",
-  steerable_bridge_id: "Зав.№ двигателя",
-  steerable_bridge_model: "Модель двигателя",
+  steerable_bridge_id: "Зав.№ управляемого моста",
+  steerable_bridge_model: "Модель управляемого моста",
   transmission_id: "Зав.№ трансмиссии",
   transmission_model: "Модель трансмиссии",
   supply_contract_num_date: "Договор поставки №, дата",
@@ -46,6 +46,7 @@ export const nameDict = {
   ref_type: "Категория",
   description: "Описание",
   edit: "ред.",
+  id: "id",
 };
 
 export const filterFields = {
@@ -57,8 +58,13 @@ export const filterFields = {
     "main_bridge_model",
     "steerable_bridge_model",
   ],
-  maintenances: ["mt_company", "service_company", "type", "machine_id"],
-  reclamations: ["failure_node", "recovery_method", "service_company"],
+  maintenances: ["mt_company", "service_company", "type", "machine"],
+  reclamations: [
+    "failure_node",
+    "recovery_method",
+    "service_company",
+    "machine",
+  ],
   references: ["ref_type", "name"],
 };
 

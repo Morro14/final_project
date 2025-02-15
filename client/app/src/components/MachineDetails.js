@@ -19,19 +19,32 @@ export async function machineLoader({ params }) {
         });
       }
     });
-  return data;
+  const userData = await axios
+
+    .get(`${serverURL}/dashboard`)
+    .then((r) => {
+      return r;
+    })
+    .catch((r) => {
+      return "nonAuth";
+    });
+  return [data, userData];
 }
 
 export default function MachineDetials({ params }) {
-  const response = useLoaderData();
+  const [data, userData] = useLoaderData();
   const navigate = useNavigate();
 
   function buttonFunction(e) {
     navigate(-1);
   }
-  const formattedData = formatRowData(response.data);
-  console.log(formattedData);
-  return !response.data ? (
+  function buttonChangeFunction() {
+    navigate("/dashboard/edit/machine/" + data.data.id_num);
+  }
+  const accessCheck =
+    userData === "nonAuth" ? false : userData.data.user.user_type === "manager";
+  const formattedData = formatRowData(data.data);
+  return !data.data ? (
     <>
       <div className="button ref-back-btn" onClick={buttonFunction}>
         Вернуться к таблице
@@ -43,11 +56,28 @@ export default function MachineDetials({ params }) {
       <div className="button ref-back-btn" onClick={buttonFunction}>
         Вернуться к таблице
       </div>
-      <h1>{response.data.id_num}</h1>
-      <div>
+      <h1>{data.data.id_num}</h1>
+      <p>
         {Object.entries(formattedData).map(([k, v]) => {
-          return <div key={"row-" + k}>{nameDict[k] + ": " + v.label}</div>;
+          return (
+            <>
+              {`${nameDict[k]}: ${v.label}`}
+              <br />
+            </>
+          );
         })}
+      </p>
+      <div>
+        {accessCheck ? (
+          <div
+            className="button machine-change-btn"
+            onClick={buttonChangeFunction}
+          >
+            Изменить
+          </div>
+        ) : (
+          ""
+        )}
       </div>
     </>
   );

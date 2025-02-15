@@ -13,6 +13,7 @@ from rest_framework.decorators import api_view, authentication_classes
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.db.models import Q
 
 from .models import Machine, Reference, Reclamation, Maintenance, MyUser
 from .serializers import MachineSerializer, MachineRestrictedSerializer, ReferenceSerializer, ReclamationSerializer, \
@@ -132,7 +133,7 @@ class AuthenticatedView(APIView):
     authentication_classes = [TokenAuthentication]
 
     @extend_schema(responses={200: AuthenticatedSerializer}, description='Data for authenticated users')
-    def get(self, request, category=None):
+    def get(self, request, category='machines'):
         sorting = request.GET.get('sorting')
         try:
             user = get_object_or_404(MyUser, email=request.user)
@@ -167,30 +168,51 @@ class AuthenticatedView(APIView):
             return Response(context)
 
         if user.is_authenticated:
-            client = user.user_ref
+            user_ref = user.user_ref
+            client_role = user.user_ref.ref_type
+            user_manager = user.groups.filter(name='Manager').exists()
+            print(user_ref, client_role, category)
 
-            machine_list = Machine.objects.filter(client=client)
-            if sorting and category == 'machines':
-                machine_list = machine_list.order_by(sorting)
+            if client_role == 'service_company':
+                if sorting and category == 'reclamations':
+                    reclamations_list = Reclamation.objects.filter(service_company=user_ref)
+                    reclamations_list = reclamations_list.order_by(sorting)
+                    return Response({'client': ReferenceSerializer(user_ref).data,
+                                     'reclamations': ReclamationSerializer(reclamations_list, many=True).data})
+                if sorting and category == 'maintenances':
+                    mt_list = Maintenance.objects.filter(Q(service_company=user_ref) | Q(mt_company=user_ref))
+                    mt_list = mt_list.order_by(sorting)
+                    return Response({'client': ReferenceSerializer(user_ref).data,
+                                     'maintenances': MaintenanceSerializer(mt_list, many=True).data})
+                if sorting and category == 'machines':
+                    machine_list = Machine.objects.filter(service_company=user_ref)
+                    machine_list = machine_list.order_by(sorting)
+                    return Response({'client': ReferenceSerializer(user_ref).data,
+                                     'machines': MachineSerializer(machine_list, many=True).data})
 
-            machine_ids = []
-            for m in machine_list:
-                machine_ids.append(m.id_num)
+            elif client_role == 'client' or user_manager:
+                machine_list = Machine.objects.filter(client=user_ref)
 
-            reclamations_list = Reclamation.objects.filter(machine_id__id_num__in=machine_ids)
-            if sorting and category == 'reclamations':
-                reclamations_list = reclamations_list.order_by(sorting)
+                if sorting and category == 'machines':
+                    machine_list = machine_list.order_by(sorting)
+                    return Response({'client': ReferenceSerializer(user_ref).data,
+                                     'machines': MachineSerializer(machine_list, many=True).data})
 
-            mt_list = Maintenance.objects.filter(machine__id_num__in=machine_ids)
+                machine_ids = []
+                for m in machine_list:
+                    machine_ids.append(m.id_num)
 
-            if sorting and category == 'maintenances':
-                mt_list = mt_list.order_by(sorting)
+                if sorting and category == 'reclamations':
+                    reclamations_list = Reclamation.objects.filter(machine_id__id_num__in=machine_ids)
+                    reclamations_list = reclamations_list.order_by(sorting)
+                    return Response({'client': ReferenceSerializer(user_ref).data,
+                                     'reclamations': ReclamationSerializer(reclamations_list, many=True).data})
 
-            context = {'client': ReferenceSerializer(client).data,
-                       'machines': MachineSerializer(machine_list, many=True).data,
-                       'reclamations': ReclamationSerializer(reclamations_list, many=True).data,
-                       'maintenances': MaintenanceSerializer(mt_list, many=True).data}
-            return Response(context)
+                if sorting and category == 'maintenances':
+                    mt_list = Maintenance.objects.filter(machine__id_num__in=machine_ids)
+                    mt_list = mt_list.order_by(sorting)
+                    return Response({'client': ReferenceSerializer(user_ref).data,
+                                     'maintenances': MaintenanceSerializer(mt_list, many=True).data})
 
 
 class CreateView(APIView):
@@ -201,6 +223,7 @@ class CreateView(APIView):
         responses={200: FormOptionFieldsSerializer()},
     )
     def get(self, request, category=None):
+        # print(request.user.user_ref, request.user.user_ref.ref_type)
         user = request.user
         user_manager = user.groups.filter(name='Manager').exists()
         if not user_manager:
@@ -232,7 +255,7 @@ class CreateView(APIView):
             maintenance_ref = Reference.objects.filter(ref_type__in=ref_types)
             if user_type == 'client':
                 machines = Machine.objects.filter(client=user.user_ref)
-            if user_type == 'service':
+            if user_type == 'service_company':
                 machines = Machine.objects.filter(service_company=user.user_ref)
             if user_type == 'Manager':
                 machines = Machine.objects.all()
@@ -247,7 +270,7 @@ class CreateView(APIView):
             reclamation_ref = Reference.objects.filter(ref_type__in=ref_types)
             if user_type == 'client':
                 machines = Machine.objects.filter(client=user.user_ref)
-            if user_type == 'service':
+            if user_type == 'service_company':
                 machines = Machine.objects.filter(service_company=user.user_ref)
             if user_type == 'Manager':
                 machines = Machine.objects.all()
@@ -324,23 +347,35 @@ class CreateView(APIView):
             else:
                 return Response(status=406, data={'text': 'invalid data'})
 
-    def patch(self, request, *args, **kwargs):
+    def patch(self, request, category, id):
         data = request.data
-
+        print(category, id, data)
         user = request.user
         id_ = int(data['id'])
         data['pk'] = id_
         data.pop('id')
         user_manager = user.groups.filter(name='Manager').exists()
-        ref = Reference.objects.get(pk=id_)
+        print(user_manager)
+        if user_manager:
+            obj = None
+            serializer = None
+            if category == "reference":
+                obj = Reference.objects.get(pk=id_)
+                serializer = ReferenceSerializer(obj, data=data)
+            if category == "machine":
+                obj = Machine.objects.get(pk=id_)
+                serializer = MachineSerializer(obj, data=data)
+            if category == "maintenance":
+                obj = Maintenance.objects.get(pk=id_)
+                serializer = MaintenanceSerializer(obj, data=data)
+            if category == "reclamation":
+                obj = Reclamation.objects.get(pk=id_)
+                serializer = ReclamationSerializer(obj, data=data)
 
-        if user_manager and ref:
-            print(data)
-            serializer = ReferenceSerializer(ref, data=data)
             serializer.is_valid()
             print(serializer.errors)
             if serializer.is_valid():
-                serializer.update(instance=ref, validated_data=data)
+                serializer.update(instance=obj, validated_data=serializer.validated_data)
                 return Response(status=200, data={'text': 'Data has been added'})
             else:
                 return Response(status=406, data={'text': 'invalid data'})

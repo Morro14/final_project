@@ -26,7 +26,7 @@ export const TextArea = ({
             type={type}
             className="textarea-el"
             placeholder={placeholder}
-            defaultValue={defaultData}
+            defaultValue={defaultData ? defaultData : ""}
             {...register(name, validation)}
           ></textarea>
           {isInvalid && Object.keys(inputError).length > 0 && (

@@ -76,11 +76,34 @@ class MachineSerializer(serializers.ModelSerializer):
         return machine
 
     def to_internal_value(self, data):
+        print('machine_to_internal', data)
         try:
             machine = Machine.objects.get(id_num=data)
         except Machine.DoesNotExist:
             return super().to_internal_value(data)
         return machine
+
+    def update(self, instance, validated_data):
+        instance.id_num = validated_data.get('id_num', instance.id_num)
+        instance.model = validated_data.get('model', instance.model)
+        instance.engine_model = validated_data.get('engine_model', instance.engine_model)
+        instance.engine_id = validated_data.get('engine_id', instance.engine_id)
+        instance.transmission_model = validated_data.get('transmission_model', instance.transmission_model)
+        instance.transmission_id = validated_data.get('transmission_id', instance.transmission_id)
+        instance.main_bridge_model = validated_data.get('main_bridge_model', instance.main_bridge_model)
+        instance.main_bridge_id = validated_data.get('main_bridge_id', instance.main_bridge_id)
+        instance.steerable_bridge_model = validated_data.get('steerable_bridge_model', instance.steerable_bridge_model)
+        instance.main_bridge_id = validated_data.get('main_bridge_id', instance.main_bridge_id)
+        instance.service_company = validated_data.get('service_company', instance.service_company)
+        instance.client = validated_data.get('client', instance.client)
+        instance.supply_contract_num_date = validated_data.get('supply_contract_num_date', instance.supply_contract_num_date)
+        instance.shipment_date = validated_data.get('shipment_date', instance.shipment_date)
+        instance.cargo_receiver = validated_data.get('cargo_receiver', instance.cargo_receiver)
+        instance.supply_address = validated_data.get('supply_address', instance.supply_address)
+        instance.equipment_add = validated_data.get('equipment_add', instance.equipment_add)
+
+        instance.save()
+        return instance
 
     class Meta:
         model = Machine

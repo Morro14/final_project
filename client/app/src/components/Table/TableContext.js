@@ -3,20 +3,14 @@ import { createContext, useContext, useState } from "react";
 const TableContext = createContext();
 
 const TableConProvider = ({ children }) => {
-  const [filterCategory, setFilterCategory] = useState("");
-  const [filterEntity, setFilterEntity] = useState("");
-  const [sorting, setSorting] = useState();
-  console.log("filterCat", filterCategory, "filterEnt", filterEntity);
+  const [tableRef, setTableRef] = useState(null);
+
   return (
     <>
       <TableContext.Provider
         value={{
-          filterCategory,
-          filterEntity,
-          sorting,
-          setFilterCategory,
-          setFilterEntity,
-          setSorting,
+          tableRef,
+          setTableRef,
         }}
       >
         {children}

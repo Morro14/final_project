@@ -33,6 +33,12 @@ export const formatRowData = (data) => {
   Object.keys(rest).map((k) => {
     if (!rest[k]) {
       formatted[k] = { label: "отсутствует", type: k };
+    } else if (k === "edit") {
+      formatted[k] = {
+        type: k,
+        label: rest[k],
+        id: rest["id_num"] ? rest["id_num"] : data["id"],
+      };
     } else if (typeof rest[k] === "object") {
       formatted[k] = {
         type: k,
@@ -43,18 +49,25 @@ export const formatRowData = (data) => {
       formatted[k] = { type: k, label: rest[k], id: data["id"] };
     }
   });
+
   return formatted;
 };
 
 // render links if the value is in "linkNames"
-export const getLink = (key, field) => {
+export const getLink = (key, field, category = null) => {
+  const categoryFormatted = category ? category.slice(0, -1) : null;
   const found = linkNames.find((k) => key === k);
+
   if (field.label === "отсутствует") {
     return field.label;
   } else if (key === "machine") {
     return <Link to={`/details/machines/${field.label}`}>{field.label}</Link>;
   } else if (key === "edit") {
-    return <Link to={"/dashboard/edit/reference/" + field.id}>{"ред."}</Link>;
+    return (
+      <Link to={`/dashboard/edit/${categoryFormatted}/` + field.id}>
+        {"ред."}
+      </Link>
+    );
   } else if (found) {
     return <Link to={`/details/${field.id}`}>{field.label}</Link>;
   }

@@ -5,6 +5,7 @@ export default function TableSort({
   type,
   id,
   selectHandle,
+  disableTag,
 }) {
   return (
     <div className="sort-select-container nav-select-container">
@@ -15,6 +16,7 @@ export default function TableSort({
           className="sort-select-el table-select-el"
           name={name}
           onChange={selectHandle}
+          disabled={disableTag}
         >
           {options.map((o) => (
             <option key={"sort-opt" + o.id} value={o.id} id={o.id}>

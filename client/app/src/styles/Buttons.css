@@ -41,6 +41,12 @@
   color: rgb(51, 51, 51);
   width: fit-content;
   padding: 0 1rem 0 1rem;
+  border-collapse: collapse;
+  margin-right: 8px;
+}
+
+.tab-button-add {
+  margin-right: 0;
 }
 /* .tab-button:hover {
   text-decoration: underline;
@@ -75,4 +81,21 @@
 }
 .delete-button:hover {
   background-color: #d45d61;
+}
+.export-button {
+  font-size: small;
+  height: fit-content;
+  width: fit-content;
+  background-color: white;
+}
+.export-button:hover {
+  text-decoration: underline;
+  background-color: white;
+}
+.export-button:disabled {
+  color: rgba(128, 128, 128, 0.623);
+  border-color: rgba(128, 128, 128, 0.623);
+}
+.export-button:disabled:hover {
+  text-decoration: none;
 }

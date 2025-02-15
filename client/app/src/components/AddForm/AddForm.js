@@ -129,6 +129,7 @@ export default function AddForm() {
       let optionsF = options[field]
         ? options[field]
         : options[refField] || options["machines"];
+
       return (
         <Select
           label={nameDict[field]}
