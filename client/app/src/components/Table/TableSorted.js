@@ -3,12 +3,15 @@ import { formatHeaders, formatRowData, getLink } from "../../utils/formatting";
 import { useState, useRef, useEffect } from "react";
 import { useTableCon } from "./TableContext";
 import "../../styles/Table.css";
+import { useAuth } from "../Auth/AuthProvider";
 
 export default function TableSorted({ params }) {
   const tabActive = params.tab;
   const sortedData = params.list;
   const tableRef = useRef();
   const tableContext = useTableCon();
+  const auth = useAuth()
+  const t = auth.translate
   useEffect(() => {
     tableContext.setTableRef(tableRef);
   }, [tableContext, tableRef]);
@@ -43,7 +46,7 @@ export default function TableSorted({ params }) {
   };
   const fadeClass = getFadeClass();
   return !sortedData[0] ? (
-    <div>Нет Данных</div>
+    <div>{t('noData')}</div>
   ) : (
     <>
       <div className={`table-container ${fadeClass}`} onScroll={handleScroll}>
@@ -55,7 +58,7 @@ export default function TableSorted({ params }) {
             <tr>
               {Object.entries(formatHeaders(sortedData[0])).map(
                 ([key, value]) => (
-                  <th key={`${tabActive}_th_` + key}>{headerLabel(key)}</th>
+                  <th key={`${tabActive}_th_` + key}>{t(headerLabel(key))}</th>
                 )
               )}
             </tr>
@@ -65,14 +68,7 @@ export default function TableSorted({ params }) {
               <tr key={`${tabActive}` + "_tr_" + item.id}>
                 {Object.entries(formatRowData(item)).map(([key, field]) => (
                   <td key={`${tabActive}` + item.id + "_" + key}>
-                    {getLink(key, field, tabActive)}
-
-                    {/* <div
-                      className={"tooltip"}
-                      key={`${tabActive}` + "_tlp_" + item.id + "_" + key}
-                    >
-                      {field}
-                    </div> */}
+                    {t(getLink(key, field, tabActive))}
                   </td>
                 ))}
               </tr>

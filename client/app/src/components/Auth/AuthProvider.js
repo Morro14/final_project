@@ -2,6 +2,7 @@ import { useContext, createContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { serverURL } from "../../index.js";
 import axios from "axios";
+import { names as namesEn } from "../../lang/en";
 
 const AuthContext = createContext();
 
@@ -48,10 +49,16 @@ const AuthProvider = ({ children }) => {
     localStorage.removeItem("site");
     navigate("/");
   };
+  const [lang, setLang] = useState('en')
 
+  function translate(name) {
+    const lang_ = lang
+    const namesLang = { en: namesEn }
+    return namesLang[lang_][name] || name
+  }
   return (
     <AuthContext.Provider
-      value={{ email, token, exception, loading, loginAction, logoutAction }}
+      value={{ email, token, exception, loading, lang, translate, setLang, loginAction, logoutAction }}
     >
       {children}
     </AuthContext.Provider>

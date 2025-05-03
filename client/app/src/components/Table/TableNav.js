@@ -20,6 +20,7 @@ import "../../styles/TableNav.css";
 import { useState } from "react";
 
 import { DownloadTableExcel } from "react-export-table-to-excel";
+import { useAuth } from "../Auth/AuthProvider";
 
 export async function sortedLoader({ params, request }) {
   const category = params.value ? params.value : "machines";
@@ -88,10 +89,10 @@ export default function TableNav() {
   // title
   const getTableTitle = (category) => {
     const names = {
-      machines: "Техника",
-      maintenances: "Тех. обслуживания",
-      reclamations: "Рекламации",
-      references: "Справочные данные",
+      machines: t('machines'),
+      maintenances: t("maintenances"),
+      reclamations: t("reclamations"),
+      references: t("references"),
     };
     if (names[category]) {
       return names[category];
@@ -262,7 +263,7 @@ export default function TableNav() {
           to={"/dashboard/references"}
           onClick={tabOnClick}
         >
-          Справочные данные
+          {t('references')}
         </NavLink>
       );
     }
@@ -289,7 +290,8 @@ export default function TableNav() {
   }
   // export
   const tableRef = tableContext.tableRef;
-
+  const auth = useAuth()
+  const t = auth.translate
   const tableDownloadEl = () => {
     return (
       <DownloadTableExcel
@@ -298,7 +300,7 @@ export default function TableNav() {
         currentTableRef={tableRef.current}
       >
         <button className="export-button button" disabled={!dataCheck}>
-          экспорт
+          {t('export')}
         </button>
       </DownloadTableExcel>
     );
@@ -306,12 +308,12 @@ export default function TableNav() {
   return (
     <div className="table-container-main">
       <h1 className="dashboard-title">
-        {managerCheck ? "Менеджер " + user.email : user.user_ref}
+        {managerCheck ? t('manager') + ' ' + user.email : user.user_ref}
       </h1>
       <h4 className="dashboard-info">
         {managerCheck
-          ? "Просмотр всех данных"
-          : "Информация о комплектации и характеристиках вашей техники"}
+          ? t('showAll')
+          : t('showInfo')}
       </h4>
       <div className="tab-bar">
         <div className="tab-bar-left">
@@ -320,21 +322,21 @@ export default function TableNav() {
             onClick={tabOnClick}
             to={"/dashboard/machines"}
           >
-            Техника
+            {t('machines')}
           </NavLink>
           <NavLink
             className="button tab-button"
             onClick={tabOnClick}
             to={"/dashboard/maintenances"}
           >
-            Т.О.
+            {t('maintenances')}
           </NavLink>
           <NavLink
             className="button tab-button"
             onClick={tabOnClick}
             to={"/dashboard/reclamations"}
           >
-            Рекламации
+            {t('reclamations')}
           </NavLink>
           {renderRefTab(managerCheck)}
         </div>
@@ -342,7 +344,7 @@ export default function TableNav() {
           className="button tab-button tab-button-add"
           to={"/dashboard/create"}
         >
-          Добавить данные
+          {t('addData')}
         </NavLink>
       </div>
       <div className="nav-container">
@@ -352,7 +354,7 @@ export default function TableNav() {
         </div>
         <div className="filter-sort-block">
           <div className="filter-block">
-            <div className="filter-block-label">фильтровать по: </div>
+            <div className="filter-block-label">{t('filterBy')} </div>
             <div className="filter-select-elements">
               <TableFilter
                 id="filter-cat-select"
@@ -374,7 +376,7 @@ export default function TableNav() {
             </div>
           </div>
           <div className="select-block">
-            <div className="select-block-label">сортировать по: </div>
+            <div className="select-block-label">{t('sortBy')} </div>
             <TableSort
               id="sort-select"
               type="select"
@@ -395,7 +397,7 @@ export default function TableNav() {
           }}
         ></TableSorted>
       ) : (
-        <>Нет данных</>
+        <>{t('noData')}</>
       )}
     </div>
   );

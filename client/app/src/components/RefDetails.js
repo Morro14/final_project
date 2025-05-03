@@ -2,6 +2,7 @@ import axios from "axios";
 import { useLoaderData, useParams } from "react-router-dom";
 import { serverURL } from "../App";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "./Auth/AuthProvider";
 
 export async function refLoader({ params }) {
   const id = params.value;
@@ -46,24 +47,26 @@ export default function RefDetials({ params }) {
   }
   const accessCheck =
     userData === "nonAuth" ? false : userData.data.user.user_type === "manager";
+  const auth = useAuth()
+  const t = auth.translate
   return !refData.data ? (
     <>
       <div className="button ref-back-btn" onClick={buttonFunction}>
-        Вернуться к таблице
+        {t('return')}
       </div>
-      <p>Не удалось найти данные об объекте</p>
+      <p>{t('detailsNotFound')}</p>
     </>
   ) : (
     <>
       <div className="button ref-back-btn" onClick={buttonFunction}>
-        Вернуться к таблице
+        {t('return')}
       </div>
       <h1>{refData.data.name}</h1>
       <p>{refData.data.description}</p>
       <div>
         {accessCheck ? (
           <div className="button ref-change-btn" onClick={buttonChangeFunction}>
-            Изменить
+            {t('edit')}
           </div>
         ) : (
           ""

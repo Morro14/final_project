@@ -1,3 +1,5 @@
+import { useAuth } from "../Auth/AuthProvider";
+
 export default function TableFilter({
   label,
   name,
@@ -12,6 +14,8 @@ export default function TableFilter({
   //   disableCheck = "true";
   // }
   // console.log("category filter", options);
+  const auth = useAuth()
+  const t = auth.translate
   return (
     <div className="filter-select-container">
       <div className="filter-select-inner">
@@ -23,10 +27,10 @@ export default function TableFilter({
           onChange={selectHandle}
           disabled={!disableTag}
         >
-          <option value="">нет фильтра</option>
+          <option value="">{t('noFilter')}</option>
           {options.map((o) => (
             <option key={"filter-opt" + o.id} value={o.id} id={o.id}>
-              {o.name}
+              {t(o.name)}
             </option>
           ))}
         </select>

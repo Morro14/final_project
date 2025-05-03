@@ -18,6 +18,7 @@ import {
 import { getChoices } from "../../utils/formChoices";
 import { useState } from "react";
 import { formatDateTime, formatSchema } from "../../utils/formatting";
+import { useAuth } from "../Auth/AuthProvider";
 
 export async function editFormLoader({ params }) {
   const category = params.category;
@@ -27,19 +28,19 @@ export async function editFormLoader({ params }) {
   const dataOptions =
     category !== "reference"
       ? await axios
-          .get(serverURL + "/create/" + category)
-          .then((r) => {
-            console.log(r);
-            return r;
-          })
-          .catch((r) => {
-            if (r.status !== 200) {
-              throw new Response("Not Found", {
-                status: r.status,
-                statusText: r.response.statusText,
-              });
-            }
-          })
+        .get(serverURL + "/create/" + category)
+        .then((r) => {
+          console.log(r);
+          return r;
+        })
+        .catch((r) => {
+          if (r.status !== 200) {
+            throw new Response("Not Found", {
+              status: r.status,
+              statusText: r.response.statusText,
+            });
+          }
+        })
       : null;
   // load current object data
   const data = await axios
@@ -85,7 +86,8 @@ export default function EditForm() {
     schemaData.data.actions.POST,
     userRef
   );
-
+  const auth = useAuth()
+  const t = auth.translate
   let options = getChoices(category, optionsData, formattedSchemaData);
 
   let formFields = Object.keys(formattedSchemaData);
@@ -126,7 +128,7 @@ export default function EditForm() {
       const defaultValue = data.data[refField] ? data.data[refField] : "";
       return (
         <TextArea
-          label={nameDict[field]}
+          label={t(nameDict[field])}
           type="text"
           id={field}
           key={"textarea_" + field}
@@ -147,7 +149,7 @@ export default function EditForm() {
       const defaultValue = data.data[field] ? data.data[field].name : null;
       return (
         <Select
-          label={nameDict[field]}
+          label={t(nameDict[field])}
           type="select"
           id={field}
           options={optionsF}
@@ -159,7 +161,7 @@ export default function EditForm() {
       const defaultValue = data.data[refField] ? data.data[refField] : "";
       return (
         <Input
-          label={nameDict[field]}
+          label={t(nameDict[field])}
           name={field}
           type="date_"
           id={field}
@@ -173,10 +175,10 @@ export default function EditForm() {
       const defaultValue = data.data[refField] ? data.data[refField] : "";
       return (
         <div className="datetime-el">
-          {nameDict[field]}
+          {t(nameDict[field])}
           <div className="datetime-container">
             <DateTimeInput
-              label={"Дата"}
+              label={t('date')}
               name={field + "_date"}
               type="date_"
               id={field + "_date"}
@@ -186,7 +188,7 @@ export default function EditForm() {
               defaultData={defaultValue}
             ></DateTimeInput>
             <DateTimeInput
-              label={"Время"}
+              label={t('time')}
               name={field + "_time"}
               type="time_"
               id={field + "_time"}
@@ -202,7 +204,7 @@ export default function EditForm() {
       const defaultValue = data.data[refField] ? data.data[refField] : "";
       return (
         <Input
-          label={nameDict[field]}
+          label={t(nameDict[field])}
           name={field}
           type="text"
           id={field}
@@ -233,12 +235,12 @@ export default function EditForm() {
           <span onClick={closeButton} className="close">
             &times;
           </span>
-          <p className="modal-text">Вы действительно хотите удалить данные?</p>
+          <p className="modal-text">{t('deleteConfirm')}</p>
           <button
             className="button delete-confirm-button"
             onClick={(e) => buttonDeleteFunction(id)}
           >
-            Подтвердить
+            {t('confirm')}
           </button>
         </div>
       </div>
@@ -262,20 +264,24 @@ export default function EditForm() {
   return deleteSuccess ? (
     <>
       <button className="button" onClick={buttonNavFunction}>
-        Вернуться
+        {t('back')}
       </button>
-      <h1>Данные успешно удалены</h1>
-      <h4>{category}</h4>
+      <h1>{t('deleteSuccess')}</h1>
+      <h4>{t(category)}</h4>
       <div>
         {Object.entries(data.data).map(([k, v]) => (
-          <div key={"row-" + k}>{k + ": " + v}</div>
+          <div key={"row-" + k}>{t(nameDict[k]) + ": " + v}</div>
         ))}
       </div>
     </>
   ) : (
     <div className="add-form-container">
       <h2 className="add-form-title">
-        Добавить данные о {titleCategoty[category]}
+        {category === 'reference' ? t('editReference') :
+          category === 'machine' ? t('editMachine') :
+            category === 'maintenance' ? t('editMaintence') :
+              category === 'reclamation' ? t('editReclamation') :
+                category}
       </h2>
       <h4 className="add-form-error-msg">{errorMsg}</h4>
       <FormProvider {...methods}>
@@ -291,7 +297,7 @@ export default function EditForm() {
           ))}
 
           <button className="add-form-button button" onClick={onSubmit}>
-            Добавить
+            {t('submit')}
           </button>
         </Form>
       </FormProvider>
@@ -299,7 +305,7 @@ export default function EditForm() {
         className="delete-button button"
         onClick={(e) => buttonGetModal(setDisplayValue)}
       >
-        Удалить
+        {t('delete')}
       </button>
       {deleteModalWidnow(displayValue, id)}
     </div>

@@ -3,6 +3,7 @@ import { serverURL } from "../App";
 import axios from "axios";
 import { formatRowData } from "../utils/formatting";
 import { nameDict } from "../utils/names";
+import { useAuth } from "./Auth/AuthProvider";
 
 export async function machineLoader({ params }) {
   const data = await axios
@@ -44,24 +45,26 @@ export default function MachineDetials({ params }) {
   const accessCheck =
     userData === "nonAuth" ? false : userData.data.user.user_type === "manager";
   const formattedData = formatRowData(data.data);
+  const auth = useAuth()
+  const t = auth.translate
   return !data.data ? (
     <>
       <div className="button ref-back-btn" onClick={buttonFunction}>
-        Вернуться к таблице
+        {t('return')}
       </div>
-      <p>Не удалось найти данные об объекте</p>
+      <p>{t('detailsNotFound')}</p>
     </>
   ) : (
     <>
       <div className="button ref-back-btn" onClick={buttonFunction}>
-        Вернуться к таблице
+        {t('return')}
       </div>
-      <h1>{data.data.id_num}</h1>
+      <h1>{'Machine ID ' + data.data.id_num}</h1>
       <p>
         {Object.entries(formattedData).map(([k, v]) => {
           return (
             <>
-              {`${nameDict[k]}: ${v.label}`}
+              {`${t(nameDict[k])}: ${v.label}`}
               <br />
             </>
           );
@@ -73,7 +76,7 @@ export default function MachineDetials({ params }) {
             className="button machine-change-btn"
             onClick={buttonChangeFunction}
           >
-            Изменить
+            {t('edit')}
           </div>
         ) : (
           ""

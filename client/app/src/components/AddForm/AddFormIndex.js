@@ -1,64 +1,53 @@
 import { Link, useOutletContext } from "react-router-dom";
+import { useAuth } from "../Auth/AuthProvider";
 
-export default function AddFormIndex({ children }) {
-  const buttonNames = [
-    "Техника",
-    "Тех. обслуживание",
-    "Рекламация",
-    "Справочник",
-  ];
-  const links = ["machine", "maintenance", "reclamation", "reference"];
+export default function AddFormIndex() {
+  const auth = useAuth()
+  const t = auth.translate
   const { user } = useOutletContext().user;
-
-  let addReferenceButton = "";
-  let addMachineButton = "";
-  let addReclamationButton = "";
   const userManager = user.groups.find((g) => g.name === "Manager");
-  if (userManager) {
-    addReferenceButton = (
-      <Link
-        className="button add-form-index-button"
-        to={"/dashboard/create/" + links[3]}
-      >
-        {buttonNames[3]}
-      </Link>
-    );
-    addMachineButton = (
-      <Link
-        className="button add-form-index-button"
-        to={"/dashboard/create/" + links[0]}
-      >
-        {buttonNames[0]}
-      </Link>
-    );
-  }
-  if (
-    userManager ||
-    user.user_type === "service" ||
-    user.user_type === "service_company"
-  ) {
-    addReclamationButton = (
-      <Link
-        className="button add-form-index-button"
-        to={"/dashboard/create/" + links[2]}
-      >
-        {buttonNames[2]}
-      </Link>
-    );
-  }
+
+  const addReferenceButton = (
+    <Link
+      className="button add-form-index-button"
+      to={"/dashboard/create/reference"}
+    >
+      {t('reference')}
+    </Link>
+  );
+
+  const addMachineButton = (
+    <Link
+      className="button add-form-index-button"
+      to={"/dashboard/create/machine"}
+    >
+      {t('machine')}
+    </Link>
+  );
+
+  const addReclamationButton = (
+    <Link
+      className="button add-form-index-button"
+      to={"/dashboard/create/reclamation"}
+    >
+      {t('reclamation')}
+    </Link>
+  );
+
   return (
     <div className="add-form-index">
-      <h2>Добавить данные:</h2>
+      <h2>{t('addData') + ':'}</h2>
       <div className="add-form-index-buttons">
-        {addMachineButton}
+        {userManager ? addMachineButton : ''}
         <Link
           className="button add-form-index-button"
-          to={"/dashboard/create/" + links[1]}
+          to={"/dashboard/create/maintenance"}
         >
-          {buttonNames[1]}
+          {t('maintenance')}
         </Link>
-        {addReclamationButton}
-        {addReferenceButton}
+        {userManager || user.user_type === "service" ||
+          user.user_type === "service_company" ? addReclamationButton : ''}
+        {userManager ? addReferenceButton : ''}
       </div>
     </div>
   );

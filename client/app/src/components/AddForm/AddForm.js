@@ -17,24 +17,26 @@ import {
 import { getChoices } from "../../utils/formChoices";
 import { useState } from "react";
 import { formatDateTime, formatSchema } from "../../utils/formatting";
+import { useAuth } from "../Auth/AuthProvider";
 
 export async function formLoader({ params }) {
+
   const category = params.category;
   const data =
     category !== "reference"
       ? await axios
-          .get(serverURL + "/create/" + category)
-          .then((r) => {
-            return r;
-          })
-          .catch((r) => {
-            if (r.status !== 200) {
-              throw new Response("Not Found", {
-                status: r.status,
-                statusText: r.response.statusText,
-              });
-            }
-          })
+        .get(serverURL + "/create/" + category)
+        .then((r) => {
+          return r;
+        })
+        .catch((r) => {
+          if (r.status !== 200) {
+            throw new Response("Not Found", {
+              status: r.status,
+              statusText: r.response.statusText,
+            });
+          }
+        })
       : "";
   const schemaData = await axios
     .options(serverURL + "/" + category + "s")
@@ -53,6 +55,8 @@ export async function formLoader({ params }) {
 }
 
 export default function AddForm() {
+  const auth = useAuth()
+  const t = auth.translate
   const methods = useForm();
   const navigate = useNavigate();
   const category = useParams("category").category;
@@ -100,9 +104,10 @@ export default function AddForm() {
   });
 
   const titleCategoty = {
-    reclamation: "рекламации",
-    maintenance: "техническом обслуживании",
-    machine: "технике",
+    reclamation: t('addReclamation'),
+    maintenance: t('addMaintenance'),
+    machine: t('addMachine'),
+    reference: t('addReference')
   };
   const getField = (field) => {
     const refField = categoryFieldToRef(field);
@@ -112,7 +117,7 @@ export default function AddForm() {
     ) {
       return (
         <TextArea
-          label={nameDict[field]}
+          label={t(nameDict[field])}
           type="text"
           id={field}
           key={"textarea_" + field}
@@ -132,7 +137,7 @@ export default function AddForm() {
 
       return (
         <Select
-          label={nameDict[field]}
+          label={t(nameDict[field])}
           type="select"
           id={field}
           options={optionsF}
@@ -142,7 +147,7 @@ export default function AddForm() {
     } else if (formattedSchemaData[field]["type"] === "date") {
       return (
         <Input
-          label={nameDict[field]}
+          label={t(nameDict[field])}
           name={field}
           type="date_"
           id={field}
@@ -154,10 +159,10 @@ export default function AddForm() {
     } else if (formattedSchemaData[field]["type"] === "datetime") {
       return (
         <div className="datetime-el">
-          {nameDict[field]}
+          {t(nameDict[field])}
           <div className="datetime-container">
             <DateTimeInput
-              label={"Дата"}
+              label={t('date')}
               name={field + "_date"}
               type="date_"
               id={field + "_date"}
@@ -166,7 +171,7 @@ export default function AddForm() {
               validation={dateValidationObj}
             ></DateTimeInput>
             <DateTimeInput
-              label={"Время"}
+              label={t('time')}
               name={field + "_time"}
               type="time_"
               id={field + "_time"}
@@ -180,7 +185,7 @@ export default function AddForm() {
     } else {
       return (
         <Input
-          label={nameDict[field]}
+          label={t(nameDict[field])}
           name={field}
           type="text"
           id={field}
@@ -191,12 +196,12 @@ export default function AddForm() {
       );
     }
   };
-  const errorMsg = addSuccess !== "" ? "Не удалось добавить данные" : "";
+  const errorMsg = addSuccess !== "" ? t('submitFail') : "";
 
   return (
     <div className="add-form-container">
       <h2 className="add-form-title">
-        Добавить данные о {titleCategoty[category]}
+        {titleCategoty[category]}
       </h2>
       <h4 className="add-form-error-msg">{errorMsg}</h4>
       <FormProvider {...methods}>
@@ -211,7 +216,7 @@ export default function AddForm() {
             </div>
           ))}
           <button className="add-form-button button" onClick={onSubmit}>
-            Добавить
+            {t('submit')}
           </button>
         </Form>
       </FormProvider>

@@ -1,20 +1,17 @@
 import "../styles/Footer.css";
-
+import { useAuth } from './Auth/AuthProvider'
 export default function Footer({ params }) {
+  const auth = useAuth()
+  const t = auth.translate
   return (
     <div className="footer">
       <div className="footer-inner">
         <div className="footer-block footer-block-1">
           <div className="footer-arrow">{">"}</div>
           <div className="footer-block-inner">
-            <h4>Контакты</h4>
+            <h4>{t('contacts')}</h4>
             <div>
-              React is a popular JavaScript library for building user
-              interfaces, especially for single-page applications. It allows
-              developers to create reusable UI components. One of the many
-              features that make React stand out is its ability to handle
-              events. In this blog post, we will focus on one specific event,
-              the onScrollCapture event.
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed id fringilla turpis, quis sollicitudin mi. Fusce quis vestibulum justo. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Proin tincidunt accumsan molestie. Vestibulum turpis orci, accumsan ut accumsan sed, ultrices eget risus. Quisque luctus, diam et rutrum rhoncus, lorem justo iaculis enim, eget eleifend mi orci vitae ipsum.
             </div>
           </div>
         </div>
@@ -28,7 +25,7 @@ export default function Footer({ params }) {
           <div className="footer-block footer-block-3">
             <div className="footer-arrow">{">"}</div>
             <div className="footer-block-inner">
-              <h4>Мой Силант 2022</h4>
+              <h4>{t('mySilant')}</h4>
             </div>
           </div>
         </div>

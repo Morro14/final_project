@@ -1,3 +1,5 @@
+import { useAuth } from "../Auth/AuthProvider";
+
 export default function TableSort({
   label,
   name,
@@ -7,6 +9,8 @@ export default function TableSort({
   selectHandle,
   disableTag,
 }) {
+  const auth = useAuth()
+  const t = auth.translate
   return (
     <div className="sort-select-container nav-select-container">
       <div className="sort-select-inner">
@@ -20,7 +24,7 @@ export default function TableSort({
         >
           {options.map((o) => (
             <option key={"sort-opt" + o.id} value={o.id} id={o.id}>
-              {o.name}
+              {t(o.name)}
             </option>
           ))}
         </select>

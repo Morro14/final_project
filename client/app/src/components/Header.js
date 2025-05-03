@@ -7,9 +7,9 @@ import logo from "../media/Logotype_accent.png";
 import { useAuth } from "./Auth/AuthProvider";
 
 export default function Header({ params }) {
-  const [displayValue, setDisplayValue] = useState("");
   const auth = useAuth();
-  let loginButtonText = "";
+  const t = auth.translate
+
 
   const navigate = useNavigate();
 
@@ -19,22 +19,14 @@ export default function Header({ params }) {
 
   let buttonFucntion = handleClick;
   let logoLink = "/";
+
   if (auth.token) {
     logoLink = "/dashboard";
-    loginButtonText = "Выйти";
-    if (displayValue !== "shown") {
-      setDisplayValue("shown");
-    }
 
     buttonFucntion = (e) => {
       auth.logoutAction();
     };
-  } else {
-    if (displayValue !== "hidden") {
-      setDisplayValue("hidden");
-    }
 
-    loginButtonText = "Авторизация";
   }
 
   return (
@@ -53,42 +45,40 @@ export default function Header({ params }) {
 
         <div className="header-title">
           <div className="title-line-1">
-            Электронная сервисная книжка "Мой Силант"
+            {t('title')}
           </div>
           <div className="top-bar">
             <div className="tob-bar-button-1">
-              {/* <div className="arrow-header">{">"}</div> */}
               <Link to="/">
                 <button className={`button header-button`}>
-                  Поиск техники
+                  {t('machineSearch')}
                 </button>
               </Link>
             </div>
             <div className="top-bar-button-2">
-              {/* <div className="arrow-header">{">"}</div> */}
               <Link to="/dashboard/machines">
                 <button
-                  className={`header-profile-container profile-button button header-button ${displayValue}`}
+                  className={`header-profile-container profile-button button header-button`}
                 >
                   <div className="header-user-email">
-                    {"Мои данные: " + auth.email}
+                    {auth.token === '' ? '' : t('myData') + ': ' + auth.email}
                   </div>
                 </button>
               </Link>
             </div>
             <div className="top-bar-button-3">
-              {/* <div className="arrow-header">{">"}</div> */}
+
               <button
                 className="login-button button header-button"
                 onClick={buttonFucntion}
               >
                 <div className="button-text login-button-text">
-                  {loginButtonText}
+                  {auth.token !== '' ? t('logout') : t('login')}
                 </div>
               </button>
             </div>
           </div>
-          {/* <div className="title-line-2">Электронная сервисная книжка</div> */}
+
         </div>
       </div>
     </div>

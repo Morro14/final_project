@@ -32,7 +32,7 @@ export const formatRowData = (data) => {
 
   Object.keys(rest).map((k) => {
     if (!rest[k]) {
-      formatted[k] = { label: "отсутствует", type: k };
+      formatted[k] = { label: "none", type: k };
     } else if (k === "edit") {
       formatted[k] = {
         type: k,
@@ -58,14 +58,14 @@ export const getLink = (key, field, category = null) => {
   const categoryFormatted = category ? category.slice(0, -1) : null;
   const found = linkNames.find((k) => key === k);
 
-  if (field.label === "отсутствует") {
+  if (field.label === "none") {
     return field.label;
   } else if (key === "machine") {
     return <Link to={`/details/machines/${field.label}`}>{field.label}</Link>;
   } else if (key === "edit") {
     return (
       <Link to={`/dashboard/edit/${categoryFormatted}/` + field.id}>
-        {"ред."}
+        {"edit"}
       </Link>
     );
   } else if (found) {

@@ -1,4 +1,5 @@
 import { useFormContext } from "react-hook-form";
+import { useAuth } from "../../Auth/AuthProvider";
 
 export const Select = ({
   label,
@@ -16,7 +17,9 @@ export const Select = ({
   if (!options) {
     optionsChecked = false;
   }
-
+  const auth = useAuth()
+  const t = auth.translate
+  console.log('select', options)
   return (
     <div className={`input-container`}>
       <div className={`input-label-container`}>
@@ -38,12 +41,12 @@ export const Select = ({
                     value={category !== "reference" ? o.slug : o.type}
                     id={o.id}
                   >
-                    {o.name}
+                    {category === 'reference' ? o.name : t(o.name)}
                   </option>
                 );
               })
             ) : (
-              <option value="not provided">нет данных</option>
+              <option value="not provided">{t('noData')}</option>
             )}
           </select>
         </div>

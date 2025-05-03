@@ -1,3 +1,5 @@
+import { useAuth } from "../Auth/AuthProvider";
+
 export default function TableFilterEntities({
   label,
   name,
@@ -12,7 +14,8 @@ export default function TableFilterEntities({
   if (disableTag === "true") {
     disableTagS = true;
   }
-  // console.log("filterEntOptions", options);
+  const auth = useAuth()
+  const t = auth.translate
   return (
     <div className="filter-select-container">
       <div className="filter-select-inner">
@@ -30,7 +33,7 @@ export default function TableFilterEntities({
             if (o.label === "нет фильтра") {
               return (
                 <option key={"filter-opt-empty"} value="" id="filter-opt-empty">
-                  {o.label}
+                  {t('noFilter')}
                 </option>
               );
             }

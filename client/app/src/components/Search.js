@@ -4,6 +4,7 @@ import "../styles/Main.css";
 import "../styles/Search.css";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useAuth } from "./Auth/AuthProvider";
 
 export default function Search({ params }) {
   const navigate = useNavigate();
@@ -20,14 +21,15 @@ export default function Search({ params }) {
     setValue(e.target.value);
     setResult("");
   };
-
+  const auth = useAuth()
+  const t = auth.translate
   return (
     <>
       <h1>
-        Проверьте комплектацию и технические характеристики техники Силант
+        {t('searchTitle')}
       </h1>
       <div className="id-search-container">
-        <p>Заводской номер: </p>
+        <p>{t('searchID')}</p>
         <form className="main-form" onSubmit={handleSubmit}>
           <div className="search-bar-container">
             <input
@@ -38,7 +40,7 @@ export default function Search({ params }) {
             ></input>
           </div>
           <button type="submit" className="button search-button">
-            <div className="button-text">Поиск</div>
+            <div className="button-text">{t('search')}</div>
           </button>
         </form>
       </div>
